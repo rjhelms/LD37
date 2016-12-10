@@ -16,10 +16,14 @@ public class GameController : MonoBehaviour
 
     public Entity Player;
 
+    public Entity[] WorldEntities;
+
     // Use this for initialization
     void Start()
     {
         NameText.text = GenerateName();
+        WorldEntities[0].Name = GenerateName(true);
+        WorldEntities[0].gameObject.name = WorldEntities[0].Name;
     }
 
     // Update is called once per frame
@@ -28,59 +32,109 @@ public class GameController : MonoBehaviour
         if (Input.anyKeyDown)
         {
             NameText.text = GenerateName();
-        }
-        if (Input.GetKeyDown(KeyCode.W))
-        {
-            Player.WorldY += 1;
-        }
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            Player.WorldY -= 1;
-        }
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            Player.WorldX -= 1;
-        }
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            Player.WorldX += 1;
-        }
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            Player.Rotation -= 1;
-        }
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            Player.Rotation += 1;
-        }
+            int new_player_x = Player.WorldX;
+            int new_player_y = Player.WorldY;
+            int new_player_rotation = Player.Rotation;
+            if (Input.GetKeyDown(KeyCode.W))
+            {
+                switch (Player.Rotation)
+                {
+                    case 0:
+                        new_player_y -= 1;
+                        break;
+                    case 1:
+                        new_player_x -= 1;
+                        break;
+                    case 2:
+                        new_player_y += 1;
+                        break;
+                    case 3:
+                        new_player_x += 1;
+                        break;
+                }
+            }
+            if (Input.GetKeyDown(KeyCode.S))
+            {
+                switch (Player.Rotation)
+                {
+                    case 0:
+                        new_player_y += 1;
+                        break;
+                    case 1:
+                        new_player_x += 1;
+                        break;
+                    case 2:
+                        new_player_y -= 1;
+                        break;
+                    case 3:
+                        new_player_x -= 1;
+                        break;
+                }
+            }
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                switch (Player.Rotation)
+                {
+                    case 0:
+                        new_player_x += 1;
+                        break;
+                    case 1:
+                        new_player_y += 1;
+                        break;
+                    case 2:
+                        new_player_x -= 1;
+                        break;
+                    case 3:
+                        new_player_y -= 1;
+                        break;
+                }
+            }
+            if (Input.GetKeyDown(KeyCode.D))
+            {
+                switch (Player.Rotation)
+                {
+                    case 0:
+                        new_player_x -= 1;
+                        break;
+                    case 1:
+                        new_player_y -= 1;
+                        break;
+                    case 2:
+                        new_player_x += 1;
+                        break;
+                    case 3:
+                        new_player_y += 1;
+                        break;
+                }
+            }
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                new_player_rotation -= 1;
+            }
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                new_player_rotation += 1;
+            }
 
-        if (Player.WorldY < 0)
-        {
-            Player.WorldY = 0;
-        }
-        if (Player.WorldY > Constants.MAX_Y)
-        {
-            Player.WorldY = Constants.MAX_Y;
-        }
-        if (Player.WorldX < 0)
-        {
-            Player.WorldX = 0;
-        }
-        if (Player.WorldX > Constants.MAX_X)
-        {
-            Player.WorldX = Constants.MAX_X;
-        }
-        if (Player.Rotation < 0)
-        {
-            Player.Rotation += 4;
-        }
-        if (Player.Rotation > 3)
-        {
-            Player.Rotation -= 4;
+            if (new_player_rotation < 0)
+            {
+                new_player_rotation += 4;
+            }
+            if (new_player_rotation > 3)
+            {
+                new_player_rotation -= 4;
+            }
+
+            if (CanMove(new_player_x, new_player_y, new_player_rotation))
+            {
+                Player.WorldX = new_player_x;
+                Player.WorldY = new_player_y;
+                Player.Rotation = new_player_rotation;
+            }
         }
     }
 
-    string GenerateName()
+    string GenerateName(bool? male=null)
     {
         string first_name;
         string last_name;
@@ -91,12 +145,14 @@ public class GameController : MonoBehaviour
             new[] { "\r\n", "\r", "\n" }, System.StringSplitOptions.None);
         string[] relation_list;
 
-        bool male = false;
-        if (Random.value < 0.5)
+        if (male == null)
         {
-            male = true;
+            if (Random.value < 0.5)
+            {
+                male = true;
+            }
         }
-        if (male)
+        if (male == true)
         {
             Debug.Log("male");
             first_name_list = NamesMale.text.Split(new[] { "\r\n", "\r", "\n" },
@@ -117,5 +173,23 @@ public class GameController : MonoBehaviour
         relation = relation_list[Random.Range(0, relation_list.Length)];
         return string.Format("{0} {1}, {2}", first_name, last_name,
                              relation);
+    }
+
+    bool CanMove(int x, int y, int rotation)
+    {
+        if (x < 0 | y < 0 | x > Constants.MAX_X | y > Constants.MAX_Y)
+        {
+            Debug.Log("movement blocked by world bounds.");
+            return false;
+        }
+        foreach(Entity entity in WorldEntities)
+        {
+            if (entity.OccupiesTile(x, y))
+            {
+                Debug.Log(string.Format("movement blocked by {0}", entity.Name));
+                return false;
+            }
+        }
+        return true;
     }
 }

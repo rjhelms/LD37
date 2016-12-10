@@ -8,11 +8,14 @@ public class Entity : MonoBehaviour {
     public int WorldY;
     public int Rotation = 0;
 
+    public string Name;
+
     public bool Lifted = false;
 
     public Sprite[] EntitySprites;
 
     private SpriteRenderer sprite_renderer;
+
 	// Use this for initialization
 	void Start () {
         sprite_renderer = gameObject.GetComponent<SpriteRenderer>();
@@ -30,4 +33,13 @@ public class Entity : MonoBehaviour {
         }
         sprite_renderer.sprite = EntitySprites[Rotation];
 	}
+
+    public bool OccupiesTile(int x, int y)
+    {
+        if (x == WorldX & y == WorldY)
+        {
+            return true;
+        }
+        return false;
+    }
 }

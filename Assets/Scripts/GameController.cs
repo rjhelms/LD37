@@ -5,10 +5,6 @@ using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
-    public const int GRID_SIZE = 48;
-    public const int MAX_X = 8;
-    public const int MAX_Y = 8;
-
     public TextAsset NamesMale;
     public TextAsset NamesFemale;
     public TextAsset NamesSurnames;
@@ -49,21 +45,38 @@ public class GameController : MonoBehaviour
         {
             Player.WorldX += 1;
         }
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            Player.Rotation -= 1;
+        }
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            Player.Rotation += 1;
+        }
+
         if (Player.WorldY < 0)
         {
             Player.WorldY = 0;
         }
-        if (Player.WorldY > MAX_Y)
+        if (Player.WorldY > Constants.MAX_Y)
         {
-            Player.WorldY = MAX_Y;
+            Player.WorldY = Constants.MAX_Y;
         }
         if (Player.WorldX < 0)
         {
             Player.WorldX = 0;
         }
-        if (Player.WorldX > MAX_X)
+        if (Player.WorldX > Constants.MAX_X)
         {
-            Player.WorldX = MAX_X;
+            Player.WorldX = Constants.MAX_X;
+        }
+        if (Player.Rotation < 0)
+        {
+            Player.Rotation += 4;
+        }
+        if (Player.Rotation > 3)
+        {
+            Player.Rotation -= 4;
         }
     }
 

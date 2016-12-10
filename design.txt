@@ -1,0 +1,7 @@
+grid: 9px x 9px, 8 x 8 logical units
+
+0,0 in world space is bottom of the grid - or will this make me insane?
+
+sprites:
+	characters: 48x64 - top 16px spill into next row
+	items: 48x48 grid, with same 16px top "overlap"

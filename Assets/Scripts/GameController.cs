@@ -141,18 +141,23 @@ public class GameController : MonoBehaviour
                 if (held_entity)
                 {
                     valid_held_entity_move = false;
-                    int new_held_entity_x = held_entity.WorldX + movement_x;
-                    int new_held_entity_y = held_entity.WorldY + movement_y;
-                    int new_held_entity_rotation = held_entity.Rotation + movement_rotation;
-                    if (new_held_entity_rotation < 0)
+                    int new_held_entity_x = held_entity.WorldX;
+                    int new_held_entity_y = held_entity.WorldY;
+                    int new_held_entity_rotation = held_entity.Rotation;
+                    if (movement_x != 0 || movement_y != 0)
                     {
-                        new_held_entity_rotation += 4;
+                        new_held_entity_x = held_entity.WorldX + movement_x;
+                        new_held_entity_y = held_entity.WorldY + movement_y;
+                        new_held_entity_rotation = held_entity.Rotation;
                     }
-                    if (new_held_entity_rotation > 3)
+                    if (movement_rotation != 0)
                     {
-                        new_held_entity_rotation -= 4;
+                        Vector3 pivot_vector = PivotEntity(
+                            Player, held_entity, movement_rotation);
+                        new_held_entity_x = (int)pivot_vector.x;
+                        new_held_entity_y = (int)pivot_vector.y;
+                        new_held_entity_rotation = (int)pivot_vector.z;       
                     }
-
                     valid_held_entity_move = CanMove(new_held_entity_x, new_held_entity_y, new_held_entity_rotation, held_entity);
 
                     if (valid_held_entity_move)
@@ -280,5 +285,45 @@ public class GameController : MonoBehaviour
             }
         }
         return null;
+    }
+
+    Vector3 PivotEntity(Entity pivot_entity, Entity moving_entity, int rotation)
+    {
+        int new_moving_rotation = moving_entity.Rotation + rotation;
+        int new_pivot_rotation = pivot_entity.Rotation + rotation;
+        int new_x = pivot_entity.WorldX;
+        int new_y = pivot_entity.WorldY;
+        if (new_moving_rotation < 0)
+        {
+            new_moving_rotation += 4;
+        }
+        if (new_moving_rotation > 3)
+        {
+            new_moving_rotation -= 4;
+        }
+        if (new_pivot_rotation < 0)
+        {
+            new_pivot_rotation += 4;
+        }
+        if (new_pivot_rotation > 3)
+        {
+            new_pivot_rotation -= 4;
+        }
+        switch (new_pivot_rotation)
+        {
+            case 0:
+                new_y -= 1;
+                break;
+            case 1:
+                new_x -= 1;
+                break;
+            case 2:
+                new_y += 1;
+                break;
+            case 3:
+                new_x += 1;
+                break;
+        }
+        return new Vector3(new_x, new_y, new_moving_rotation);
     }
 }

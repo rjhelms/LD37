@@ -355,7 +355,7 @@ MonoBehaviour:
   WorldX: 4
   WorldY: 4
   Rotation: 2
-  Name: 
+  Name: Player
   Lifted: 0
   EntitySprites:
   - {fileID: 21300300, guid: dc31902cb4f3436419fad7bd178fb8d8, type: 3}
@@ -519,9 +519,9 @@ MonoBehaviour:
   Lifted: 0
   EntitySprites:
   - {fileID: 21300300, guid: dc31902cb4f3436419fad7bd178fb8d8, type: 3}
-  - {fileID: 21300300, guid: dc31902cb4f3436419fad7bd178fb8d8, type: 3}
+  - {fileID: 21300324, guid: dc31902cb4f3436419fad7bd178fb8d8, type: 3}
   - {fileID: 21300348, guid: dc31902cb4f3436419fad7bd178fb8d8, type: 3}
-  - {fileID: 21300348, guid: dc31902cb4f3436419fad7bd178fb8d8, type: 3}
+  - {fileID: 21300372, guid: dc31902cb4f3436419fad7bd178fb8d8, type: 3}
 --- !u!1 &1457914016
 GameObject:
   m_ObjectHideFlags: 0

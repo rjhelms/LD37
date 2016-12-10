@@ -28,7 +28,8 @@ public class Entity : MonoBehaviour {
         if (Lifted)
         {
             transform.position = new Vector3(
-                transform.position.x, transform.position.y + 16,
+                transform.position.x,
+                transform.position.y + Constants.LIFTED_OFFSET,
                 transform.position.z);
         }
         sprite_renderer.sprite = EntitySprites[Rotation];
@@ -36,6 +37,7 @@ public class Entity : MonoBehaviour {
 
     public bool OccupiesTile(int x, int y)
     {
+        if (Lifted) return false;
         if (x == WorldX & y == WorldY)
         {
             return true;

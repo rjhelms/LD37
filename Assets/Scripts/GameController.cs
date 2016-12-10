@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
+    public const int GRID_SIZE = 48;
+    public const int MAX_X = 8;
+    public const int MAX_Y = 8;
 
     public TextAsset NamesMale;
     public TextAsset NamesFemale;
@@ -14,6 +17,8 @@ public class GameController : MonoBehaviour
     public TextAsset RelationsFemale;
 
     public Text NameText;
+
+    public Entity Player;
 
     // Use this for initialization
     void Start()
@@ -27,6 +32,38 @@ public class GameController : MonoBehaviour
         if (Input.anyKeyDown)
         {
             NameText.text = GenerateName();
+        }
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            Player.WorldY += 1;
+        }
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            Player.WorldY -= 1;
+        }
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            Player.WorldX -= 1;
+        }
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            Player.WorldX += 1;
+        }
+        if (Player.WorldY < 0)
+        {
+            Player.WorldY = 0;
+        }
+        if (Player.WorldY > MAX_Y)
+        {
+            Player.WorldY = MAX_Y;
+        }
+        if (Player.WorldX < 0)
+        {
+            Player.WorldX = 0;
+        }
+        if (Player.WorldX > MAX_X)
+        {
+            Player.WorldX = MAX_X;
         }
     }
 

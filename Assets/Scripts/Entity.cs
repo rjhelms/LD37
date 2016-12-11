@@ -31,39 +31,45 @@ public class Entity : MonoBehaviour {
 	void Update () {
         if (Spawned)
         {
-            transform.position = new Vector3(
-                WorldX * Constants.GRID_SIZE, WorldY * Constants.GRID_SIZE, WorldY);
+            Vector3 target_position = new Vector3(
+                WorldX * Constants.GRID_SIZE, 
+                WorldY * Constants.GRID_SIZE, 
+                WorldY);
+
             if (Lifted)
             {
                 if (controller.Player.WorldX < WorldX)
                 {
-                    transform.position = new Vector3(
-                        transform.position.x - (Constants.GRID_SIZE / 4),
-                        transform.position.y + Constants.LIFTED_OFFSET,
-                        transform.position.z + 0.5f);
+                    target_position += new Vector3(
+                        -(Constants.GRID_SIZE / 4),
+                        Constants.LIFTED_OFFSET,
+                        0.5f);
                 }
                 else if (controller.Player.WorldX > WorldX)
                 {
-                    transform.position = new Vector3(
-                        transform.position.x + (Constants.GRID_SIZE / 4),
-                        transform.position.y + Constants.LIFTED_OFFSET,
-                        transform.position.z + 0.5f);
+                    target_position += new Vector3(
+                        (Constants.GRID_SIZE / 4),
+                        Constants.LIFTED_OFFSET,
+                        0.5f);
                 }
                 else if (controller.Player.WorldY < WorldY)
                 {
-                    transform.position = new Vector3(
-                        transform.position.x,
-                        transform.position.y + Constants.LIFTED_OFFSET - Constants.GRID_SIZE / 4,
-                        transform.position.z);
+                    target_position += new Vector3(
+                        0, Constants.LIFTED_OFFSET - Constants.GRID_SIZE / 4,
+                        0);
                 }
                 else if (controller.Player.WorldY > WorldY)
                 {
-                    transform.position = new Vector3(
-                        transform.position.x,
-                        transform.position.y + Constants.LIFTED_OFFSET + Constants.GRID_SIZE / 4,
-                        transform.position.z);
+                    transform.position += new Vector3(
+                        0, Constants.LIFTED_OFFSET + Constants.GRID_SIZE / 8,
+                        0);
                 }
             }
+            target_position = Vector3.Lerp(
+                transform.position, 
+                target_position, 
+                0.33f);
+            transform.position = new Vector3((int)target_position.x, (int)target_position.y, target_position.z);
             sprite_renderer.sprite = EntitySprites[Rotation];
         }
 	}
@@ -76,5 +82,14 @@ public class Entity : MonoBehaviour {
             return true;
         }
         return false;
+    }
+
+    public void Spawn()
+    {
+        Spawned = true;
+        transform.position = new Vector3(
+            4 * Constants.GRID_SIZE,
+            -1 * Constants.GRID_SIZE,
+            -1);
     }
 }

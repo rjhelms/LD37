@@ -13,7 +13,11 @@ public class GameController : MonoBehaviour
     public TextAsset RelationsFemale;
 
     public Text NameText;
+    public Text CarryingText;
 
+    public Color NameTextNormal;
+    public Color NameTextWarning;
+    public Color NameTextUrgent;
     public Entity Player;
 
     public List<Entity> WorldEntities;
@@ -22,48 +26,72 @@ public class GameController : MonoBehaviour
 
     public GameObject[] MalePrefabs;
     public GameObject[] FemalePrefabs;
+    public GameObject[] PossessionPrefabs;
 
     public Vector3 PrefabInstantiatePoint;
     public bool RelativeMovement = false;
-    public float TimeBetweenImmigrants = 1f;
-    public float TimeBetweenImmigrantsInitial = 5f;
-    public float TimeBetweenImmigrantsMinimum = 0.1f;
+    public float TimeBetweenSpawns = 1f;
+    public float TimeBetweenSpawnsInitial = 5f;
+    public float TimeBetweenSpawnsMinimum = 0.1f;
     public float TimeAccelerationFactor = 1.1f;
     private Entity next_entity;
-    private float time_to_next_immigrant;
+    private int possessions_to_spawn;
+    private string possession_prefix;
+    private float time_to_next_spawn;
 
     // Use this for initialization
     void Start()
     {
         WorldEntities.Add(Player);
         next_entity = CreateImmigrant();
+        possessions_to_spawn = Random.Range(0, 3);
         NameText.text = next_entity.Name;
-        time_to_next_immigrant = Time.time + TimeBetweenImmigrantsInitial;
+        time_to_next_spawn = Time.time + TimeBetweenSpawnsInitial;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Time.time > time_to_next_immigrant)
+        float time_remaining = time_to_next_spawn - Time.time;
+        if (time_remaining <= 1)
         {
-            Debug.Log("Spawning immigrant");
+            NameText.color = NameTextUrgent;
+        } else if (time_remaining <= 2)
+        {
+            NameText.color = NameTextWarning;
+        } else
+        {
+            NameText.color = NameTextNormal;
+        }
+        if (time_remaining <= 0)
+        {
+            NameText.color = NameTextNormal;
+            Debug.Log("Spawning entity");
             if (CanMove(
                 next_entity.WorldX, next_entity.WorldY, next_entity.Rotation,
                 next_entity))
             {
-                next_entity.Spawned = true;
+                next_entity.Spawn();
                 WorldEntities.Add(next_entity);
-                next_entity = CreateImmigrant();
+                if (possessions_to_spawn == 0)
+                {
+                    next_entity = CreateImmigrant();
+                    possessions_to_spawn = Random.Range(0, 3);
+                } else
+                {
+                    next_entity = CreatePossession();
+                    possessions_to_spawn--;
+                }
                 NameText.text = next_entity.Name;
             } else
             {
                 Debug.Log("Game over!");
             }
-            time_to_next_immigrant = Time.time + TimeBetweenImmigrants;
-            TimeBetweenImmigrants = TimeBetweenImmigrants / TimeAccelerationFactor;
-            if (TimeBetweenImmigrants < TimeBetweenImmigrantsMinimum)
+            time_to_next_spawn = Time.time + TimeBetweenSpawns;
+            TimeBetweenSpawns = TimeBetweenSpawns / TimeAccelerationFactor;
+            if (TimeBetweenSpawns < TimeBetweenSpawnsMinimum)
             {
-                TimeBetweenImmigrants = TimeBetweenImmigrantsMinimum;
+                TimeBetweenSpawns = TimeBetweenSpawnsMinimum;
             }
         }
 
@@ -238,6 +266,7 @@ public class GameController : MonoBehaviour
                     held_entity.Lifted = false;
                     Debug.Log(string.Format("Dropped {0}", held_entity.Name));
                     held_entity = null;
+                    CarryingText.text = "Nothing";
                 } else
                 {
                     switch (Player.Rotation)
@@ -263,6 +292,7 @@ public class GameController : MonoBehaviour
                     {
                         Debug.Log(string.Format("Lifted {0}", held_entity.Name));
                         held_entity.Lifted = true;
+                        CarryingText.text = held_entity.Name;
                     } else
                     {
                         Debug.Log("Nothing to lift.");
@@ -418,8 +448,27 @@ public class GameController : MonoBehaviour
         }
         Entity new_entity = new_immigrant.GetComponent<Entity>();
         new_entity.Name = GenerateName(male);
+        string[] name_split = new_entity.Name.Split(
+            new[] { " " }, System.StringSplitOptions.None);
+        new_entity.ShortName = 
+            char.ToUpper(name_split[2][0]) + name_split[2].Substring(1) + " " 
+            + name_split[0];
         new_entity.Rotation = Random.Range(0, 3);
         new_immigrant.name = new_entity.Name;
+        possession_prefix = new_entity.ShortName;
         return new_entity;
-}
+    }
+
+    Entity CreatePossession()
+    {
+        GameObject new_possession;
+        new_possession = Instantiate(
+            PossessionPrefabs[Random.Range(0, PossessionPrefabs.Length)],
+            PrefabInstantiatePoint, Quaternion.identity);
+        Entity new_entity = new_possession.GetComponent<Entity>();
+        new_entity.Name = string.Format(
+            "{0}'s {1}", possession_prefix, new_entity.ShortName);
+        new_possession.name = new_entity.Name;
+        return new_entity;
+    }
 }

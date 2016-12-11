@@ -644,6 +644,7 @@ public class GameController : MonoBehaviour
             PossessionPrefabs[Random.Range(0, PossessionPrefabs.Length)],
             PrefabInstantiatePoint, Quaternion.identity);
         Entity new_entity = new_possession.GetComponent<Entity>();
+        new_possession.transform.position -= new Vector3(0, (new_entity.h - 1) * Constants.GRID_SIZE, 0);
         new_entity.Name = string.Format(
             "{0}'s {1}", possession_prefix, new_entity.ShortName);
         new_possession.name = new_entity.Name;

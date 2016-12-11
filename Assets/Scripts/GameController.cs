@@ -7,6 +7,7 @@ public class GameController : MonoBehaviour
 {
     #region Public fields
     public Camera MainCamera;
+    public AudioSource SoundPlayer;
 
     public TextAsset NamesMale;
     public TextAsset NamesFemale;
@@ -40,6 +41,9 @@ public class GameController : MonoBehaviour
     public float TimeAccelerationFactor = 1.1f;
 
     public float MaxEntities = 10;
+
+    public AudioClip WarningSound;
+
     #endregion
 
     #region Private fields
@@ -49,6 +53,7 @@ public class GameController : MonoBehaviour
     private float time_to_next_spawn;
     private int current_screen_w;
     private int current_screen_h;
+    private int warning_sound_played;
     #endregion
 
     #region MonoBehaviour Methods
@@ -66,6 +71,7 @@ public class GameController : MonoBehaviour
         possessions_to_spawn = Random.Range(0, 4);
         NameText.text = next_entity.Name;
         time_to_next_spawn = Time.time + TimeBetweenSpawnsInitial;
+        warning_sound_played = 2;
     }
 
     // Update is called once per frame
@@ -360,10 +366,20 @@ public class GameController : MonoBehaviour
         float time_remaining = time_to_next_spawn - Time.time;
         if (time_remaining <= 1)
         {
+            if (warning_sound_played < 2)
+            {
+                SoundPlayer.PlayOneShot(WarningSound);
+                warning_sound_played++;
+            }
             NameText.color = NameTextUrgent;
         }
         else if (time_remaining <= 2)
         {
+            if (warning_sound_played < 1)
+            {
+                SoundPlayer.PlayOneShot(WarningSound);
+                warning_sound_played++;
+            }
             NameText.color = NameTextWarning;
         }
         else
@@ -414,6 +430,7 @@ public class GameController : MonoBehaviour
                         }
                     }
                 }
+                warning_sound_played = 0;
             }
             else
             {

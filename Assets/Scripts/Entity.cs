@@ -69,7 +69,7 @@ public class Entity : MonoBehaviour {
                 transform.position, 
                 target_position, 
                 0.33f);
-            transform.position = new Vector3((int)target_position.x, (int)target_position.y, target_position.z);
+            transform.position = new Vector3(Mathf.Round(target_position.x), Mathf.Round(target_position.y), target_position.z);
             sprite_renderer.sprite = EntitySprites[Rotation];
         }
 	}

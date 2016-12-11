@@ -63,13 +63,13 @@ MonoBehaviour:
   CarriedY: 0
   CarriedW: 0
   CarriedH: 0
-  w: 1
-  h: 2
+  w: 2
+  h: 1
   EntitySprites:
+  - {fileID: 21300000, guid: c00ef7a0ffd93a34ab332ccb4c67aff1, type: 3}
   - {fileID: 21300004, guid: c00ef7a0ffd93a34ab332ccb4c67aff1, type: 3}
   - {fileID: 21300002, guid: c00ef7a0ffd93a34ab332ccb4c67aff1, type: 3}
   - {fileID: 21300006, guid: c00ef7a0ffd93a34ab332ccb4c67aff1, type: 3}
-  - {fileID: 21300000, guid: c00ef7a0ffd93a34ab332ccb4c67aff1, type: 3}
 --- !u!212 &212877502122617364
 SpriteRenderer:
   m_ObjectHideFlags: 1

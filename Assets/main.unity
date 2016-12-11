@@ -213,6 +213,7 @@ MonoBehaviour:
   TimeBetweenSpawnsInitial: 2
   TimeBetweenSpawnsMinimum: 0.1
   TimeAccelerationFactor: 1.01
+  MaxEntities: 3
 --- !u!4 &601931879
 Transform:
   m_ObjectHideFlags: 0

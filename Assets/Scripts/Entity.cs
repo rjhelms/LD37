@@ -19,16 +19,27 @@ public class Entity : MonoBehaviour {
     public int CarriedH;
     public int w = 1;
     public int h = 1;
-
     public Sprite[] EntitySprites;
 
     private SpriteRenderer sprite_renderer;
     private GameController controller;
+    private int spawn_y_offset;
+
 	// Use this for initialization
 	void Start () {
         sprite_renderer = gameObject.GetComponent<SpriteRenderer>();
         controller = FindObjectOfType<GameController>();
-	}
+        if (w <= h)
+        {
+            Rotation = 0;
+            spawn_y_offset = h;
+        }
+        else
+        {
+            Rotation = 3;
+            spawn_y_offset = w;
+        }
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -122,16 +133,16 @@ public class Entity : MonoBehaviour {
         if (w <= h)
         {
             Rotation = 0;
-            y_offset = h;
+            spawn_y_offset = h;
         } else
         {
             Rotation = 3;
-            y_offset = w;
+            spawn_y_offset = w;
         }
         transform.position = new Vector3(
             WorldX * Constants.GRID_SIZE,
-            (WorldY - y_offset) * Constants.GRID_SIZE,
-            -y_offset);
+            (WorldY - spawn_y_offset) * Constants.GRID_SIZE,
+            -spawn_y_offset);
     }
 
     public void SetCarryPoint(int x, int y)

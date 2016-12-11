@@ -10,6 +10,7 @@ public class Entity : MonoBehaviour {
 
     public string Name;
 
+    public bool Spawned = false;
     public bool Lifted = false;
 
     public Sprite[] EntitySprites;
@@ -24,44 +25,48 @@ public class Entity : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        transform.position = new Vector3(
-            WorldX * Constants.GRID_SIZE, WorldY * Constants.GRID_SIZE, WorldY);
-        if (Lifted)
+        if (Spawned)
         {
-            if (controller.Player.WorldX < WorldX)
+            transform.position = new Vector3(
+                WorldX * Constants.GRID_SIZE, WorldY * Constants.GRID_SIZE, WorldY);
+            if (Lifted)
             {
-                transform.position = new Vector3(
-                    transform.position.x - (Constants.GRID_SIZE / 4),
-                    transform.position.y + Constants.LIFTED_OFFSET,
-                    transform.position.z);
+                if (controller.Player.WorldX < WorldX)
+                {
+                    transform.position = new Vector3(
+                        transform.position.x - (Constants.GRID_SIZE / 4),
+                        transform.position.y + Constants.LIFTED_OFFSET,
+                        transform.position.z + 0.5f);
+                }
+                else if (controller.Player.WorldX > WorldX)
+                {
+                    transform.position = new Vector3(
+                        transform.position.x + (Constants.GRID_SIZE / 4),
+                        transform.position.y + Constants.LIFTED_OFFSET,
+                        transform.position.z + 0.5f);
+                }
+                else if (controller.Player.WorldY < WorldY)
+                {
+                    transform.position = new Vector3(
+                        transform.position.x,
+                        transform.position.y + Constants.LIFTED_OFFSET - Constants.GRID_SIZE / 4,
+                        transform.position.z);
+                }
+                else if (controller.Player.WorldY > WorldY)
+                {
+                    transform.position = new Vector3(
+                        transform.position.x,
+                        transform.position.y + Constants.LIFTED_OFFSET + Constants.GRID_SIZE / 4,
+                        transform.position.z);
+                }
             }
-            else if (controller.Player.WorldX > WorldX)
-            {
-                transform.position = new Vector3(
-                    transform.position.x + (Constants.GRID_SIZE / 4),
-                    transform.position.y + Constants.LIFTED_OFFSET,
-                    transform.position.z);
-            }
-            else if (controller.Player.WorldY < WorldY)
-            {
-                transform.position = new Vector3(
-                    transform.position.x,
-                    transform.position.y + Constants.LIFTED_OFFSET - Constants.GRID_SIZE / 4,
-                    transform.position.z);
-            } else if (controller.Player.WorldY > WorldY)
-            {
-                transform.position = new Vector3(
-                    transform.position.x,
-                    transform.position.y + Constants.LIFTED_OFFSET + Constants.GRID_SIZE / 4,
-                    transform.position.z);
-            }
+            sprite_renderer.sprite = EntitySprites[Rotation];
         }
-        sprite_renderer.sprite = EntitySprites[Rotation];
 	}
 
     public bool OccupiesTile(int x, int y)
     {
-        if (Lifted) return false;
+        if (!Spawned) return false;
         if (x == WorldX & y == WorldY)
         {
             return true;

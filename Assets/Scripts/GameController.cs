@@ -16,24 +16,59 @@ public class GameController : MonoBehaviour
 
     public Entity Player;
 
-    public Entity[] WorldEntities;
+    public List<Entity> WorldEntities;
 
     private Entity held_entity = null;
+
+    public GameObject[] MalePrefabs;
+    public GameObject[] FemalePrefabs;
+
+    public Vector3 PrefabInstantiatePoint;
+
+    public float TimeBetweenImmigrants = 1f;
+    public float TimeBetweenImmigrantsInitial = 5f;
+    public float TimeBetweenImmigrantsMinimum = 0.1f;
+    public float TimeAccelerationFactor = 1.1f;
+    private Entity next_entity;
+    private float time_to_next_immigrant;
 
     // Use this for initialization
     void Start()
     {
-        NameText.text = GenerateName();
-        WorldEntities[0].Name = GenerateName(true);
-        WorldEntities[0].gameObject.name = WorldEntities[0].Name;
+        WorldEntities.Add(Player);
+        next_entity = CreateImmigrant();
+        NameText.text = next_entity.Name;
+        time_to_next_immigrant = Time.time + TimeBetweenImmigrantsInitial;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (Time.time > time_to_next_immigrant)
+        {
+            Debug.Log("Spawning immigrant");
+            if (CanMove(
+                next_entity.WorldX, next_entity.WorldY, next_entity.Rotation,
+                next_entity))
+            {
+                next_entity.Spawned = true;
+                WorldEntities.Add(next_entity);
+                next_entity = CreateImmigrant();
+                NameText.text = next_entity.Name;
+            } else
+            {
+                Debug.Log("Game over!");
+            }
+            time_to_next_immigrant = Time.time + TimeBetweenImmigrants;
+            TimeBetweenImmigrants = TimeBetweenImmigrants / TimeAccelerationFactor;
+            if (TimeBetweenImmigrants < TimeBetweenImmigrantsMinimum)
+            {
+                TimeBetweenImmigrants = TimeBetweenImmigrantsMinimum;
+            }
+        }
+
         if (Input.anyKeyDown)
         {
-            NameText.text = GenerateName();
             int new_player_x = Player.WorldX;
             int new_player_y = Player.WorldY;
             int new_player_rotation = Player.Rotation;
@@ -266,10 +301,24 @@ public class GameController : MonoBehaviour
         {
             if (moving_entity != entity & entity.OccupiesTile(x, y))
             {
-                Debug.Log(string.Format(
-                    "movement blocked by {0}: {1}",
-                    entity.Name, moving_entity.Name));
-                return false;
+                bool can_block = false;
+                if (moving_entity == Player & !entity.Lifted)
+                {
+                    can_block = true;
+                } else if (moving_entity.Lifted & entity != Player)
+                {
+                    can_block = true;
+                } else if (!moving_entity.Lifted & moving_entity != Player)
+                {
+                    can_block = true;
+                }
+                if (can_block)
+                {
+                    Debug.Log(string.Format(
+                        "movement blocked by {0}: {1}",
+                        entity.Name, moving_entity.Name));
+                    return false;
+                }
             }
         }
         return true;
@@ -326,4 +375,30 @@ public class GameController : MonoBehaviour
         }
         return new Vector3(new_x, new_y, new_moving_rotation);
     }
+
+    Entity CreateImmigrant()
+    {
+        bool male = false;
+        if (Random.value < 0.5)
+        {
+            male = true;
+        }
+        GameObject new_immigrant;
+        if (male)
+        {
+            new_immigrant = Instantiate(
+                MalePrefabs[Random.Range(0, MalePrefabs.Length)], 
+                PrefabInstantiatePoint, Quaternion.identity);
+        } else
+        {
+            new_immigrant = Instantiate(
+                FemalePrefabs[Random.Range(0, FemalePrefabs.Length)],
+                PrefabInstantiatePoint, Quaternion.identity);
+        }
+        Entity new_entity = new_immigrant.GetComponent<Entity>();
+        new_entity.Name = GenerateName(male);
+        new_entity.Rotation = Random.Range(0, 3);
+        new_immigrant.name = new_entity.Name;
+        return new_entity;
+}
 }

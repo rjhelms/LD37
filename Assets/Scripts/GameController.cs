@@ -52,158 +52,15 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float time_remaining = time_to_next_spawn - Time.time;
-        if (time_remaining <= 1)
-        {
-            NameText.color = NameTextUrgent;
-        } else if (time_remaining <= 2)
-        {
-            NameText.color = NameTextWarning;
-        } else
-        {
-            NameText.color = NameTextNormal;
-        }
-        if (time_remaining <= 0)
-        {
-            NameText.color = NameTextNormal;
-            Debug.Log("Spawning entity");
-            if (CanMove(
-                next_entity.WorldX, next_entity.WorldY, next_entity.Rotation,
-                next_entity))
-            {
-                next_entity.Spawn();
-                WorldEntities.Add(next_entity);
-                if (possessions_to_spawn == 0)
-                {
-                    next_entity = CreateImmigrant();
-                    possessions_to_spawn = Random.Range(0, 3);
-                } else
-                {
-                    next_entity = CreatePossession();
-                    possessions_to_spawn--;
-                }
-                NameText.text = next_entity.Name;
-            } else
-            {
-                Debug.Log("Game over!");
-            }
-            time_to_next_spawn = Time.time + TimeBetweenSpawns;
-            TimeBetweenSpawns = TimeBetweenSpawns / TimeAccelerationFactor;
-            if (TimeBetweenSpawns < TimeBetweenSpawnsMinimum)
-            {
-                TimeBetweenSpawns = TimeBetweenSpawnsMinimum;
-            }
-        }
+        UpdateSpawn();
 
         if (Input.anyKeyDown)
         {
             int new_player_x = Player.WorldX;
             int new_player_y = Player.WorldY;
             int new_player_rotation = Player.Rotation;
-            int movement_x = 0;
-            int movement_y = 0;
-            int movement_rotation = 0;
-            if (RelativeMovement)
-            {
-                if (Input.GetKeyDown(KeyCode.W))
-                {
-                    switch (Player.Rotation)
-                    {
-                        case 0:
-                            movement_y -= 1;
-                            break;
-                        case 1:
-                            movement_x -= 1;
-                            break;
-                        case 2:
-                            movement_y += 1;
-                            break;
-                        case 3:
-                            movement_x += 1;
-                            break;
-                    }
-                }
-                if (Input.GetKeyDown(KeyCode.S))
-                {
-                    switch (Player.Rotation)
-                    {
-                        case 0:
-                            movement_y += 1;
-                            break;
-                        case 1:
-                            movement_x += 1;
-                            break;
-                        case 2:
-                            movement_y -= 1;
-                            break;
-                        case 3:
-                            movement_x -= 1;
-                            break;
-                    }
-                }
-                if (Input.GetKeyDown(KeyCode.A))
-                {
-                    switch (Player.Rotation)
-                    {
-                        case 0:
-                            movement_x += 1;
-                            break;
-                        case 1:
-                            movement_y += 1;
-                            break;
-                        case 2:
-                            movement_x -= 1;
-                            break;
-                        case 3:
-                            movement_y -= 1;
-                            break;
-                    }
-                }
-                if (Input.GetKeyDown(KeyCode.D))
-                {
-                    switch (Player.Rotation)
-                    {
-                        case 0:
-                            movement_x -= 1;
-                            break;
-                        case 1:
-                            movement_y -= 1;
-                            break;
-                        case 2:
-                            movement_x += 1;
-                            break;
-                        case 3:
-                            movement_y += 1;
-                            break;
-                    }
-                }
-            } else
-            {
-                if (Input.GetKeyDown(KeyCode.W))
-                {
-                    movement_y += 1;
-                }
-                if (Input.GetKeyDown(KeyCode.S))
-                {
-                    movement_y -= 1;
-                }
-                if (Input.GetKeyDown(KeyCode.A))
-                {
-                    movement_x -= 1;
-                }
-                if (Input.GetKeyDown(KeyCode.D))
-                {
-                    movement_x += 1;
-                }
-            }
-            if (Input.GetKeyDown(KeyCode.Q))
-            {
-                movement_rotation -= 1;
-            }
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                movement_rotation += 1;
-            }
+            int movement_x, movement_y, movement_rotation;
+            ProcessMovementInput(out movement_x, out movement_y, out movement_rotation);
 
             new_player_rotation += movement_rotation;
 
@@ -221,83 +78,257 @@ public class GameController : MonoBehaviour
 
             if (CanMove(new_player_x, new_player_y, new_player_rotation, Player))
             {
-                bool valid_held_entity_move = true;
-                if (held_entity)
-                {
-                    valid_held_entity_move = false;
-                    int new_held_entity_x = held_entity.WorldX;
-                    int new_held_entity_y = held_entity.WorldY;
-                    int new_held_entity_rotation = held_entity.Rotation;
-                    if (movement_x != 0 || movement_y != 0)
-                    {
-                        new_held_entity_x = held_entity.WorldX + movement_x;
-                        new_held_entity_y = held_entity.WorldY + movement_y;
-                        new_held_entity_rotation = held_entity.Rotation;
-                    }
-                    if (movement_rotation != 0)
-                    {
-                        Vector3 pivot_vector = PivotEntity(
-                            Player, held_entity, movement_rotation);
-                        new_held_entity_x = (int)pivot_vector.x;
-                        new_held_entity_y = (int)pivot_vector.y;
-                        new_held_entity_rotation = (int)pivot_vector.z;       
-                    }
-                    valid_held_entity_move = CanMove(new_held_entity_x, new_held_entity_y, new_held_entity_rotation, held_entity);
-
-                    if (valid_held_entity_move)
-                    {
-                        held_entity.WorldX = new_held_entity_x;
-                        held_entity.WorldY = new_held_entity_y;
-                        held_entity.Rotation = new_held_entity_rotation;
-                    }
-                }
-                if (valid_held_entity_move)
-                {
-                    Player.WorldX = new_player_x;
-                    Player.WorldY = new_player_y;
-                    Player.Rotation = new_player_rotation;
-                }
+                TryMove(movement_x, movement_y, movement_rotation);
             }
 
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                if (held_entity)    // drop a held entity
+                TryLift();
+            }
+        }
+    }
+
+    private void TryLift()
+    {
+        if (held_entity)    // drop a held entity
+        {
+            held_entity.Lifted = false;
+            Debug.Log(string.Format("Dropped {0}", held_entity.Name));
+            held_entity = null;
+            CarryingText.text = "Nothing";
+        }
+        else
+        {
+            switch (Player.Rotation)
+            {
+                case 0:
+                    held_entity = GetEntityAtLocation(
+                        Player.WorldX, Player.WorldY - 1);
+                    break;
+                case 1:
+                    held_entity = GetEntityAtLocation(
+                        Player.WorldX - 1, Player.WorldY);
+                    break;
+                case 2:
+                    held_entity = GetEntityAtLocation(
+                        Player.WorldX, Player.WorldY + 1);
+                    break;
+                case 3:
+                    held_entity = GetEntityAtLocation(
+                        Player.WorldX + 1, Player.WorldY);
+                    break;
+            }
+            if (held_entity)
+            {
+                Debug.Log(string.Format("Lifted {0}", held_entity.Name));
+                held_entity.Lifted = true;
+                CarryingText.text = held_entity.Name;
+            }
+            else
+            {
+                Debug.Log("Nothing to lift.");
+            }
+        }
+    }
+
+    private void ProcessMovementInput(out int movement_x, out int movement_y, out int movement_rotation)
+    {
+        movement_x = 0;
+        movement_y = 0;
+        movement_rotation = 0;
+        if (RelativeMovement)
+        {
+            if (Input.GetKeyDown(KeyCode.W))
+            {
+                switch (Player.Rotation)
                 {
-                    held_entity.Lifted = false;
-                    Debug.Log(string.Format("Dropped {0}", held_entity.Name));
-                    held_entity = null;
-                    CarryingText.text = "Nothing";
-                } else
-                {
-                    switch (Player.Rotation)
-                    {
-                        case 0:
-                            held_entity = GetEntityAtLocation(
-                                Player.WorldX, Player.WorldY - 1);
-                            break;
-                        case 1:
-                            held_entity = GetEntityAtLocation(
-                                Player.WorldX -1, Player.WorldY);
-                            break;
-                        case 2:
-                            held_entity = GetEntityAtLocation(
-                                Player.WorldX, Player.WorldY + 1);
-                            break;
-                        case 3:
-                            held_entity = GetEntityAtLocation(
-                                Player.WorldX + 1, Player.WorldY);
-                            break;
-                    }
-                    if (held_entity)
-                    {
-                        Debug.Log(string.Format("Lifted {0}", held_entity.Name));
-                        held_entity.Lifted = true;
-                        CarryingText.text = held_entity.Name;
-                    } else
-                    {
-                        Debug.Log("Nothing to lift.");
-                    }
+                    case 0:
+                        movement_y -= 1;
+                        break;
+                    case 1:
+                        movement_x -= 1;
+                        break;
+                    case 2:
+                        movement_y += 1;
+                        break;
+                    case 3:
+                        movement_x += 1;
+                        break;
                 }
+            }
+            if (Input.GetKeyDown(KeyCode.S))
+            {
+                switch (Player.Rotation)
+                {
+                    case 0:
+                        movement_y += 1;
+                        break;
+                    case 1:
+                        movement_x += 1;
+                        break;
+                    case 2:
+                        movement_y -= 1;
+                        break;
+                    case 3:
+                        movement_x -= 1;
+                        break;
+                }
+            }
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                switch (Player.Rotation)
+                {
+                    case 0:
+                        movement_x += 1;
+                        break;
+                    case 1:
+                        movement_y += 1;
+                        break;
+                    case 2:
+                        movement_x -= 1;
+                        break;
+                    case 3:
+                        movement_y -= 1;
+                        break;
+                }
+            }
+            if (Input.GetKeyDown(KeyCode.D))
+            {
+                switch (Player.Rotation)
+                {
+                    case 0:
+                        movement_x -= 1;
+                        break;
+                    case 1:
+                        movement_y -= 1;
+                        break;
+                    case 2:
+                        movement_x += 1;
+                        break;
+                    case 3:
+                        movement_y += 1;
+                        break;
+                }
+            }
+        }
+        else
+        {
+            if (Input.GetKeyDown(KeyCode.W))
+            {
+                movement_y += 1;
+            }
+            if (Input.GetKeyDown(KeyCode.S))
+            {
+                movement_y -= 1;
+            }
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                movement_x -= 1;
+            }
+            if (Input.GetKeyDown(KeyCode.D))
+            {
+                movement_x += 1;
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            movement_rotation -= 1;
+        }
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            movement_rotation += 1;
+        }
+    }
+
+    private void TryMove(int movement_x, int movement_y, int movement_rotation)
+    {
+        int new_player_x = Player.WorldX + movement_x;
+        int new_player_y = Player.WorldY + movement_y;
+        int new_player_rotation = Player.Rotation + movement_rotation;
+        bool valid_held_entity_move = true;
+        if (held_entity)
+        {
+            valid_held_entity_move = false;
+            int new_held_entity_x = held_entity.WorldX;
+            int new_held_entity_y = held_entity.WorldY;
+            int new_held_entity_rotation = held_entity.Rotation;
+            if (movement_x != 0 || movement_y != 0)
+            {
+                new_held_entity_x = held_entity.WorldX + movement_x;
+                new_held_entity_y = held_entity.WorldY + movement_y;
+                new_held_entity_rotation = held_entity.Rotation;
+            }
+            if (movement_rotation != 0)
+            {
+                Vector3 pivot_vector = PivotEntity(
+                    Player, held_entity, movement_rotation);
+                new_held_entity_x = (int)pivot_vector.x;
+                new_held_entity_y = (int)pivot_vector.y;
+                new_held_entity_rotation = (int)pivot_vector.z;
+            }
+            valid_held_entity_move = CanMove(new_held_entity_x, new_held_entity_y, new_held_entity_rotation, held_entity);
+
+            if (valid_held_entity_move)
+            {
+                held_entity.WorldX = new_held_entity_x;
+                held_entity.WorldY = new_held_entity_y;
+                held_entity.Rotation = new_held_entity_rotation;
+            }
+        }
+        if (valid_held_entity_move)
+        {
+            Player.WorldX = new_player_x;
+            Player.WorldY = new_player_y;
+            Player.Rotation = new_player_rotation;
+        }
+    }
+
+    private void UpdateSpawn()
+    {
+        float time_remaining = time_to_next_spawn - Time.time;
+        if (time_remaining <= 1)
+        {
+            NameText.color = NameTextUrgent;
+        }
+        else if (time_remaining <= 2)
+        {
+            NameText.color = NameTextWarning;
+        }
+        else
+        {
+            NameText.color = NameTextNormal;
+        }
+        if (time_remaining <= 0)
+        {
+            NameText.color = NameTextNormal;
+            Debug.Log("Spawning entity");
+            if (CanMove(
+                next_entity.WorldX, next_entity.WorldY, next_entity.Rotation,
+                next_entity))
+            {
+                next_entity.Spawn();
+                WorldEntities.Add(next_entity);
+                if (possessions_to_spawn == 0)
+                {
+                    next_entity = CreateImmigrant();
+                    possessions_to_spawn = Random.Range(0, 3);
+                }
+                else
+                {
+                    next_entity = CreatePossession();
+                    possessions_to_spawn--;
+                }
+                NameText.text = next_entity.Name;
+            }
+            else
+            {
+                Debug.Log("Game over!");
+            }
+            time_to_next_spawn = Time.time + TimeBetweenSpawns;
+            TimeBetweenSpawns = TimeBetweenSpawns / TimeAccelerationFactor;
+            if (TimeBetweenSpawns < TimeBetweenSpawnsMinimum)
+            {
+                TimeBetweenSpawns = TimeBetweenSpawnsMinimum;
             }
         }
     }

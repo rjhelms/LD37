@@ -50,8 +50,8 @@ public class GameController : MonoBehaviour
     public float TimeBetweenSpawnsMinimum = 0.1f;
     public float TimeAccelerationFactor = 1.1f;
     public float TimeGetReady = 1.0f;
-    public float MaxEntities = 10;
-
+    public int MaxEntities = 10;
+    public int MaxEntitiesStep = 2;
     public AudioClip WarningSound;
     public AudioClip SpawnSound;
     public AudioClip LiftSound;
@@ -756,7 +756,7 @@ public class GameController : MonoBehaviour
         }
         WorldEntities.Remove(randomEntity);
         Destroy(randomEntity.gameObject);
-        MaxEntities++;
+        MaxEntities += MaxEntitiesStep;
     }
     #endregion
 }

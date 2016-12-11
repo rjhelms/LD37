@@ -4,7 +4,7 @@ timeCreated: 1481392601
 licenseType: Free
 TrueTypeFontImporter:
   serializedVersion: 4
-  fontSize: 128
+  fontSize: 256
   forceTextureCase: 0
   characterSpacing: 0
   characterPadding: 1
@@ -14,7 +14,7 @@ TrueTypeFontImporter:
   - Px437 IBM VGA8
   fallbackFontReferences: []
   customCharacters: 
-  fontRenderingMode: 0
+  fontRenderingMode: 2
   ascentCalculationMode: 1
   userData: 
   assetBundleName: 

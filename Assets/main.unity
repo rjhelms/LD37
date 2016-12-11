@@ -212,12 +212,13 @@ MonoBehaviour:
     type: 2}
   PrefabInstantiatePoint: {x: 456, y: 304, z: 0}
   RelativeMovement: 1
-  TimeBetweenSpawns: 5
-  TimeBetweenSpawnsInitial: 3
-  TimeBetweenSpawnsMinimum: 0.1
-  TimeAccelerationFactor: 1.01
-  TimeGetReady: 1
-  MaxEntities: 3
+  TimeBetweenSpawns: 6
+  TimeBetweenSpawnsInitial: 2
+  TimeBetweenSpawnsMinimum: 1
+  TimeAccelerationFactor: 1.03
+  TimeGetReady: 2
+  MaxEntities: 5
+  MaxEntitiesStep: 2
   WarningSound: {fileID: 8300000, guid: d3adcf456f629e74eb374648735cc124, type: 3}
   SpawnSound: {fileID: 8300000, guid: 15e4f3e76688d184281157dcd62cb1a2, type: 3}
   LiftSound: {fileID: 8300000, guid: 3d9cfcc2d2fdf4240a8d0ab65e9c523a, type: 3}

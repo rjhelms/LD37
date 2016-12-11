@@ -194,6 +194,7 @@ MonoBehaviour:
   FemalePrefabs:
   - {fileID: 1572490786925214, guid: 9acc6e79aebaef8428ca7ca8133ce399, type: 2}
   PrefabInstantiatePoint: {x: 456, y: 304, z: 0}
+  RelativeMovement: 0
   TimeBetweenImmigrants: 2
   TimeBetweenImmigrantsInitial: 5
   TimeBetweenImmigrantsMinimum: 0.1

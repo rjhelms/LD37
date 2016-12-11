@@ -24,7 +24,7 @@ public class GameController : MonoBehaviour
     public GameObject[] FemalePrefabs;
 
     public Vector3 PrefabInstantiatePoint;
-
+    public bool RelativeMovement = false;
     public float TimeBetweenImmigrants = 1f;
     public float TimeBetweenImmigrantsInitial = 5f;
     public float TimeBetweenImmigrantsMinimum = 0.1f;
@@ -75,76 +75,97 @@ public class GameController : MonoBehaviour
             int movement_x = 0;
             int movement_y = 0;
             int movement_rotation = 0;
-            if (Input.GetKeyDown(KeyCode.W))
+            if (RelativeMovement)
             {
-                switch (Player.Rotation)
+                if (Input.GetKeyDown(KeyCode.W))
                 {
-                    case 0:
-                        movement_y -= 1;
-                        break;
-                    case 1:
-                        movement_x -= 1;
-                        break;
-                    case 2:
-                        movement_y += 1;
-                        break;
-                    case 3:
-                        movement_x += 1;
-                        break;
+                    switch (Player.Rotation)
+                    {
+                        case 0:
+                            movement_y -= 1;
+                            break;
+                        case 1:
+                            movement_x -= 1;
+                            break;
+                        case 2:
+                            movement_y += 1;
+                            break;
+                        case 3:
+                            movement_x += 1;
+                            break;
+                    }
                 }
-            }
-            if (Input.GetKeyDown(KeyCode.S))
-            {
-                switch (Player.Rotation)
+                if (Input.GetKeyDown(KeyCode.S))
                 {
-                    case 0:
-                        movement_y += 1;
-                        break;
-                    case 1:
-                        movement_x += 1;
-                        break;
-                    case 2:
-                        movement_y -= 1;
-                        break;
-                    case 3:
-                        movement_x -= 1;
-                        break;
+                    switch (Player.Rotation)
+                    {
+                        case 0:
+                            movement_y += 1;
+                            break;
+                        case 1:
+                            movement_x += 1;
+                            break;
+                        case 2:
+                            movement_y -= 1;
+                            break;
+                        case 3:
+                            movement_x -= 1;
+                            break;
+                    }
                 }
-            }
-            if (Input.GetKeyDown(KeyCode.A))
-            {
-                switch (Player.Rotation)
+                if (Input.GetKeyDown(KeyCode.A))
                 {
-                    case 0:
-                        movement_x += 1;
-                        break;
-                    case 1:
-                        movement_y += 1;
-                        break;
-                    case 2:
-                        movement_x -= 1;
-                        break;
-                    case 3:
-                        movement_y -= 1;
-                        break;
+                    switch (Player.Rotation)
+                    {
+                        case 0:
+                            movement_x += 1;
+                            break;
+                        case 1:
+                            movement_y += 1;
+                            break;
+                        case 2:
+                            movement_x -= 1;
+                            break;
+                        case 3:
+                            movement_y -= 1;
+                            break;
+                    }
                 }
-            }
-            if (Input.GetKeyDown(KeyCode.D))
-            {
-                switch (Player.Rotation)
+                if (Input.GetKeyDown(KeyCode.D))
                 {
-                    case 0:
-                        movement_x -= 1;
-                        break;
-                    case 1:
-                        movement_y -= 1;
-                        break;
-                    case 2:
-                        movement_x += 1;
-                        break;
-                    case 3:
-                        movement_y += 1;
-                        break;
+                    switch (Player.Rotation)
+                    {
+                        case 0:
+                            movement_x -= 1;
+                            break;
+                        case 1:
+                            movement_y -= 1;
+                            break;
+                        case 2:
+                            movement_x += 1;
+                            break;
+                        case 3:
+                            movement_y += 1;
+                            break;
+                    }
+                }
+            } else
+            {
+                if (Input.GetKeyDown(KeyCode.W))
+                {
+                    movement_y += 1;
+                }
+                if (Input.GetKeyDown(KeyCode.S))
+                {
+                    movement_y -= 1;
+                }
+                if (Input.GetKeyDown(KeyCode.A))
+                {
+                    movement_x -= 1;
+                }
+                if (Input.GetKeyDown(KeyCode.D))
+                {
+                    movement_x += 1;
                 }
             }
             if (Input.GetKeyDown(KeyCode.Q))

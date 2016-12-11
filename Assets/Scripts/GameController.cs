@@ -6,6 +6,8 @@ using UnityEngine.UI;
 public class GameController : MonoBehaviour
 {
     #region Public fields
+    public Camera MainCamera;
+
     public TextAsset NamesMale;
     public TextAsset NamesFemale;
     public TextAsset NamesSurnames;
@@ -36,6 +38,8 @@ public class GameController : MonoBehaviour
     public float TimeBetweenSpawnsInitial = 5f;
     public float TimeBetweenSpawnsMinimum = 0.1f;
     public float TimeAccelerationFactor = 1.1f;
+
+    public float MaxEntities = 10;
     #endregion
 
     #region Private fields
@@ -43,12 +47,15 @@ public class GameController : MonoBehaviour
     private int possessions_to_spawn;
     private string possession_prefix;
     private float time_to_next_spawn;
+    private int current_screen_w;
+    private int current_screen_h;
     #endregion
 
     #region MonoBehaviour Methods
     // Use this for initialization
     void Start()
     {
+        InitScreen();
         WorldEntities.Add(Player);
         next_entity = CreateImmigrant();
         Instantiate(
@@ -64,6 +71,11 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (current_screen_w != Screen.width | current_screen_h != Screen.height)
+        {
+            InitScreen();
+        }
+
         UpdateSpawn();
 
         if (Input.anyKeyDown)
@@ -102,6 +114,20 @@ public class GameController : MonoBehaviour
         }
     }
     #endregion
+
+    void InitScreen()
+    {
+        current_screen_h = Screen.height;
+        current_screen_w = Screen.width;
+        float multiplier = current_screen_h / 480.0f;
+        if (multiplier >= 1)
+        {
+            multiplier = Mathf.Floor(multiplier);
+        }
+        MainCamera.orthographicSize = (current_screen_h / multiplier) / 2;
+        Debug.Log(current_screen_h);
+        Debug.Log(multiplier);
+    }
 
     #region Private Methods
 
@@ -353,6 +379,10 @@ public class GameController : MonoBehaviour
                 next_entity))
             {
                 next_entity.Spawn();
+                if (WorldEntities.Count > MaxEntities)
+                {
+                    DeleteRandomEntity();
+                }
                 WorldEntities.Add(next_entity);
                 foreach (GameObject spawnbox
                     in GameObject.FindGameObjectsWithTag("WarningBox"))
@@ -384,7 +414,6 @@ public class GameController : MonoBehaviour
                         }
                     }
                 }
-
             }
             else
             {
@@ -651,5 +680,16 @@ public class GameController : MonoBehaviour
         return new_entity;
     }
 
+    private void DeleteRandomEntity()
+    {
+        Entity randomEntity = null;
+        while (!randomEntity | randomEntity == Player)
+        {
+            randomEntity = WorldEntities[Random.Range(0, WorldEntities.Count)];
+            Debug.Log("Trying to delete " + randomEntity.Name);
+        }
+        WorldEntities.Remove(randomEntity);
+        Destroy(randomEntity.gameObject);
+    }
     #endregion
 }

@@ -25,8 +25,11 @@ public class Entity : MonoBehaviour {
     private GameController controller;
     private int spawn_y_offset;
 
+
+
 	// Use this for initialization
 	void Start () {
+
         sprite_renderer = gameObject.GetComponent<SpriteRenderer>();
         controller = FindObjectOfType<GameController>();
         if (w <= h)
@@ -43,6 +46,7 @@ public class Entity : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
         if (Spawned)
         {
             Vector3 target_position = CalculateTargetPosition();
@@ -193,4 +197,5 @@ public class Entity : MonoBehaviour {
             target_world_y * Constants.GRID_SIZE,
             target_world_y);
     }
+
 }

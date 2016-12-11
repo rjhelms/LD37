@@ -61,7 +61,8 @@ public class GameController : MonoBehaviour
             int new_player_y = Player.WorldY;
             int new_player_rotation = Player.Rotation;
             int movement_x, movement_y, movement_rotation;
-            ProcessMovementInput(out movement_x, out movement_y, out movement_rotation);
+            ProcessMovementInput(
+                out movement_x, out movement_y, out movement_rotation);
 
             new_player_rotation += movement_rotation;
 
@@ -77,7 +78,8 @@ public class GameController : MonoBehaviour
             new_player_x += movement_x;
             new_player_y += movement_y;
 
-            if (CanMove(new_player_x, new_player_y, new_player_rotation, Player))
+            if (CanMove(new_player_x, new_player_y, new_player_rotation, 
+                Player))
             {
                 TryMove(movement_x, movement_y, movement_rotation);
             }
@@ -135,7 +137,8 @@ public class GameController : MonoBehaviour
         }
     }
 
-    private void ProcessMovementInput(out int movement_x, out int movement_y, out int movement_rotation)
+    private void ProcessMovementInput(out int movement_x, out int movement_y,
+                                      out int movement_rotation)
     {
         movement_x = 0;
         movement_y = 0;
@@ -422,7 +425,8 @@ public class GameController : MonoBehaviour
         return null;
     }
 
-    private Vector3 PivotEntity(Entity pivot_entity, Entity moving_entity, int rotation)
+    private Vector3 PivotEntity(Entity pivot_entity, Entity moving_entity, 
+                                int rotation)
     {
         int new_moving_rotation = moving_entity.Rotation + rotation;
         int new_pivot_rotation = pivot_entity.Rotation + rotation;

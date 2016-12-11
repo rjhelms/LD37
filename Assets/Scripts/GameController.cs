@@ -27,6 +27,7 @@ public class GameController : MonoBehaviour
 
     public Text NameText;
     public Text CarryingText;
+    public Text ScoreText;
     public GameObject GetReadyPanel;
 
     public Color NameTextNormal;
@@ -89,6 +90,7 @@ public class GameController : MonoBehaviour
         {
             InitScreen();
         }
+        ScoreText.text = string.Format("{0}", ScoreManager.Instance.Score);
         if (State == GameState.STARTING)
         {
             if (Time.time >= get_ready_time)
@@ -452,11 +454,13 @@ public class GameController : MonoBehaviour
                 }
                 if (possessions_to_spawn == 0)
                 {
+                    ScoreManager.Instance.Score += 1000;
                     next_entity = CreateImmigrant();
                     possessions_to_spawn = Random.Range(0, 4);
                 }
                 else
                 {
+                    ScoreManager.Instance.Score += 100;
                     next_entity = CreatePossession();
                     possessions_to_spawn--;
                 }

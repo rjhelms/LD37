@@ -46,7 +46,8 @@ public class GameController : MonoBehaviour
     public AudioClip SpawnSound;
     public AudioClip LiftSound;
     public AudioClip DropSound;
-
+    public AudioClip BlockedSound;
+    public AudioClip MoveSound;
     #endregion
 
     #region Private fields
@@ -96,26 +97,31 @@ public class GameController : MonoBehaviour
             ProcessMovementInput(
                 out movement_x, out movement_y, out movement_rotation);
 
-            new_player_rotation += movement_rotation;
-
-            if (new_player_rotation < 0)
+            if (movement_x != 0 | movement_y != 0 | movement_rotation != 0)
             {
-                new_player_rotation += 4;
-            }
-            if (new_player_rotation > 3)
-            {
-                new_player_rotation -= 4;
-            }
+                new_player_rotation += movement_rotation;
 
-            new_player_x += movement_x;
-            new_player_y += movement_y;
+                if (new_player_rotation < 0)
+                {
+                    new_player_rotation += 4;
+                }
+                if (new_player_rotation > 3)
+                {
+                    new_player_rotation -= 4;
+                }
 
-            if (CanMove(new_player_x, new_player_y, new_player_rotation, 
-                Player))
-            {
-                TryMove(movement_x, movement_y, movement_rotation);
+                new_player_x += movement_x;
+                new_player_y += movement_y;
+
+                if (CanMove(new_player_x, new_player_y, new_player_rotation,
+                    Player))
+                {
+                    TryMove(movement_x, movement_y, movement_rotation);
+                } else
+                {
+                    SoundPlayer.PlayOneShot(BlockedSound);
+                }
             }
-
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 TryLift();
@@ -363,6 +369,10 @@ public class GameController : MonoBehaviour
             Player.WorldX = new_player_x;
             Player.WorldY = new_player_y;
             Player.Rotation = new_player_rotation;
+            SoundPlayer.PlayOneShot(MoveSound);
+        } else
+        {
+            SoundPlayer.PlayOneShot(BlockedSound);
         }
     }
 

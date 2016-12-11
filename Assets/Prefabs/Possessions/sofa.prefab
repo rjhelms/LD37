@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 212782379180609138}
   - component: {fileID: 114244647471606052}
   m_Layer: 0
-  m_Name: dummy3x1
+  m_Name: sofa
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -54,9 +54,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   WorldX: 4
   WorldY: 0
-  Rotation: 0
+  Rotation: 3
   Name: 
-  ShortName: dummy3x1
+  ShortName: sofa
   Spawned: 0
   Carried: 0
   CarriedX: 0
@@ -66,10 +66,10 @@ MonoBehaviour:
   w: 3
   h: 1
   EntitySprites:
-  - {fileID: 21300002, guid: 8ffd06715a343d747b4d7804658c2da8, type: 3}
   - {fileID: 21300000, guid: 8ffd06715a343d747b4d7804658c2da8, type: 3}
   - {fileID: 21300002, guid: 8ffd06715a343d747b4d7804658c2da8, type: 3}
-  - {fileID: 21300000, guid: 8ffd06715a343d747b4d7804658c2da8, type: 3}
+  - {fileID: 21300008, guid: 8ffd06715a343d747b4d7804658c2da8, type: 3}
+  - {fileID: 21300006, guid: 8ffd06715a343d747b4d7804658c2da8, type: 3}
 --- !u!212 &212782379180609138
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -101,7 +101,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300002, guid: 8ffd06715a343d747b4d7804658c2da8, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8ffd06715a343d747b4d7804658c2da8, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

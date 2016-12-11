@@ -85,9 +85,9 @@ public class Entity : MonoBehaviour {
         }
 	}
 
-    public bool OccupiesTile(int x, int y)
+    public bool OccupiesTile(int x, int y, bool check_spawn=true)
     {
-        if (!Spawned) return false;
+        if (check_spawn & !Spawned) return false;
         int min_x = WorldX;
         int min_y = WorldY;
         int max_x;
@@ -129,7 +129,6 @@ public class Entity : MonoBehaviour {
     public void Spawn()
     {
         Spawned = true;
-        int y_offset;
         if (w <= h)
         {
             Rotation = 0;

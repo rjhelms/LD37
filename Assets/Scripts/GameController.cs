@@ -28,6 +28,7 @@ public class GameController : MonoBehaviour
     public GameObject[] MalePrefabs;
     public GameObject[] FemalePrefabs;
     public GameObject[] PossessionPrefabs;
+    public GameObject SpawnWarningBoxPrefab;
 
     public Vector3 PrefabInstantiatePoint;
     public bool RelativeMovement = false;
@@ -50,6 +51,11 @@ public class GameController : MonoBehaviour
     {
         WorldEntities.Add(Player);
         next_entity = CreateImmigrant();
+        Instantiate(
+            SpawnWarningBoxPrefab, new Vector3(
+                next_entity.WorldX * Constants.GRID_SIZE,
+                next_entity.WorldY * Constants.GRID_SIZE,
+                10), Quaternion.identity);
         possessions_to_spawn = Random.Range(0, 4);
         NameText.text = next_entity.Name;
         time_to_next_spawn = Time.time + TimeBetweenSpawnsInitial;
@@ -348,6 +354,11 @@ public class GameController : MonoBehaviour
             {
                 next_entity.Spawn();
                 WorldEntities.Add(next_entity);
+                foreach (GameObject spawnbox
+                    in GameObject.FindGameObjectsWithTag("WarningBox"))
+                {
+                    Destroy(spawnbox);
+                }
                 if (possessions_to_spawn == 0)
                 {
                     next_entity = CreateImmigrant();
@@ -359,6 +370,21 @@ public class GameController : MonoBehaviour
                     possessions_to_spawn--;
                 }
                 NameText.text = next_entity.Name;
+                for (int x = 0; x < Constants.MAX_X; x++)
+                {
+                    for (int y=0; y< Constants.MAX_Y; y++)
+                    {
+                        if (next_entity.OccupiesTile(x, y, false))
+                        {
+                            Instantiate(
+                                SpawnWarningBoxPrefab, new Vector3(
+                                    x * Constants.GRID_SIZE,
+                                    y * Constants.GRID_SIZE,
+                                    10), Quaternion.identity);
+                        }
+                    }
+                }
+
             }
             else
             {
@@ -607,6 +633,7 @@ public class GameController : MonoBehaviour
         new_entity.Rotation = Random.Range(0, 3);
         new_immigrant.name = new_entity.Name;
         possession_prefix = new_entity.ShortName;
+
         return new_entity;
     }
 

@@ -9,9 +9,13 @@ public class Entity : MonoBehaviour {
     public int Rotation = 0;
 
     public string Name;
+    public string ShortName;
 
     public bool Spawned = false;
     public bool Lifted = false;
+
+    public int w = 1;
+    public int h = 1;
 
     public Sprite[] EntitySprites;
 

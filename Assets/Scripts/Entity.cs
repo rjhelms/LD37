@@ -77,7 +77,17 @@ public class Entity : MonoBehaviour {
     public bool OccupiesTile(int x, int y)
     {
         if (!Spawned) return false;
-        if (x == WorldX & y == WorldY)
+        int max_x;
+        int max_y;
+        if (Rotation == 0 | Rotation == 2)
+        {
+            max_x = WorldX + w;
+            max_y = WorldY + h;
+        } else {
+            max_x = WorldX + h;
+            max_y = WorldY + w;
+        }
+        if (x >= WorldX & x < max_x & y >= WorldY & y < max_y)
         {
             return true;
         }
@@ -87,16 +97,19 @@ public class Entity : MonoBehaviour {
     public void Spawn()
     {
         Spawned = true;
+        int offset;
         if (w <= h)
         {
             Rotation = 0;
+            offset = h;
         } else
         {
             Rotation = 1;
+            offset = w;
         }
         transform.position = new Vector3(
-            4 * Constants.GRID_SIZE,
-            -1 * Constants.GRID_SIZE,
-            -1);
+            WorldX * Constants.GRID_SIZE,
+            (WorldY - offset) * Constants.GRID_SIZE,
+            -offset);
     }
 }

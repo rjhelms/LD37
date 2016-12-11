@@ -1,11 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+
+public enum GameState
+{
+    STARTING,
+    RUNNING,
+    LOSING
+}
 
 public class GameController : MonoBehaviour
 {
     #region Public fields
+    public GameState State;
     public Camera MainCamera;
     public AudioSource SoundPlayer;
 
@@ -48,6 +57,7 @@ public class GameController : MonoBehaviour
     public AudioClip DropSound;
     public AudioClip BlockedSound;
     public AudioClip MoveSound;
+    public AudioClip GameOverSound;
     #endregion
 
     #region Private fields
@@ -76,6 +86,7 @@ public class GameController : MonoBehaviour
         NameText.text = next_entity.Name;
         time_to_next_spawn = Time.time + TimeBetweenSpawnsInitial;
         warning_sound_played = 0;
+        State = GameState.RUNNING;
     }
 
     // Update is called once per frame
@@ -86,45 +97,55 @@ public class GameController : MonoBehaviour
             InitScreen();
         }
 
+        if (State == GameState.RUNNING)
+        { 
         UpdateSpawn();
 
-        if (Input.anyKeyDown)
-        {
-            int new_player_x = Player.WorldX;
-            int new_player_y = Player.WorldY;
-            int new_player_rotation = Player.Rotation;
-            int movement_x, movement_y, movement_rotation;
-            ProcessMovementInput(
-                out movement_x, out movement_y, out movement_rotation);
-
-            if (movement_x != 0 | movement_y != 0 | movement_rotation != 0)
+            if (Input.anyKeyDown)
             {
-                new_player_rotation += movement_rotation;
+                int new_player_x = Player.WorldX;
+                int new_player_y = Player.WorldY;
+                int new_player_rotation = Player.Rotation;
+                int movement_x, movement_y, movement_rotation;
+                ProcessMovementInput(
+                    out movement_x, out movement_y, out movement_rotation);
 
-                if (new_player_rotation < 0)
+                if (movement_x != 0 | movement_y != 0 | movement_rotation != 0)
                 {
-                    new_player_rotation += 4;
+                    new_player_rotation += movement_rotation;
+
+                    if (new_player_rotation < 0)
+                    {
+                        new_player_rotation += 4;
+                    }
+                    if (new_player_rotation > 3)
+                    {
+                        new_player_rotation -= 4;
+                    }
+
+                    new_player_x += movement_x;
+                    new_player_y += movement_y;
+
+                    if (CanMove(new_player_x, new_player_y, new_player_rotation,
+                        Player))
+                    {
+                        TryMove(movement_x, movement_y, movement_rotation);
+                    }
+                    else
+                    {
+                        SoundPlayer.PlayOneShot(BlockedSound);
+                    }
                 }
-                if (new_player_rotation > 3)
+                if (Input.GetKeyDown(KeyCode.Space))
                 {
-                    new_player_rotation -= 4;
-                }
-
-                new_player_x += movement_x;
-                new_player_y += movement_y;
-
-                if (CanMove(new_player_x, new_player_y, new_player_rotation,
-                    Player))
-                {
-                    TryMove(movement_x, movement_y, movement_rotation);
-                } else
-                {
-                    SoundPlayer.PlayOneShot(BlockedSound);
+                    TryLift();
                 }
             }
-            if (Input.GetKeyDown(KeyCode.Space))
+        } else if (State == GameState.LOSING)
+        {
+            if (!SoundPlayer.isPlaying)
             {
-                TryLift();
+                SceneManager.LoadScene("main");
             }
         }
     }
@@ -450,6 +471,8 @@ public class GameController : MonoBehaviour
             }
             else
             {
+                State = GameState.LOSING;
+                SoundPlayer.PlayOneShot(GameOverSound);
                 Debug.Log("Game over!");
             }
             time_to_next_spawn = Time.time + TimeBetweenSpawns;

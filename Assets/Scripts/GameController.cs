@@ -43,6 +43,9 @@ public class GameController : MonoBehaviour
     public float MaxEntities = 10;
 
     public AudioClip WarningSound;
+    public AudioClip SpawnSound;
+    public AudioClip LiftSound;
+    public AudioClip DropSound;
 
     #endregion
 
@@ -71,7 +74,7 @@ public class GameController : MonoBehaviour
         possessions_to_spawn = Random.Range(0, 4);
         NameText.text = next_entity.Name;
         time_to_next_spawn = Time.time + TimeBetweenSpawnsInitial;
-        warning_sound_played = 2;
+        warning_sound_played = 0;
     }
 
     // Update is called once per frame
@@ -252,6 +255,7 @@ public class GameController : MonoBehaviour
         if (held_entity)    // drop a held entity
         {
             held_entity.Carried = false;
+            SoundPlayer.PlayOneShot(DropSound);
             Debug.Log(string.Format("Dropped {0}", held_entity.Name));
             held_entity = null;
             CarryingText.text = "Nothing";
@@ -290,6 +294,7 @@ public class GameController : MonoBehaviour
                 held_entity.Carried = true;
                 held_entity.SetCarryPoint(held_x, held_y);
                 CarryingText.text = held_entity.Name;
+                SoundPlayer.PlayOneShot(LiftSound);
             }
             else
             {
@@ -431,6 +436,7 @@ public class GameController : MonoBehaviour
                     }
                 }
                 warning_sound_played = 0;
+                SoundPlayer.PlayOneShot(SpawnSound);
             }
             else
             {

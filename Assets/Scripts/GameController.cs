@@ -682,9 +682,9 @@ public class GameController : MonoBehaviour
 
     private void DeleteRandomEntity()
     {
-        Entity randomEntity = null;
+        Entity randomEntity = Player;
         // can't delete player, or what they're carrying
-        while (!randomEntity | randomEntity == Player | randomEntity.Carried)
+        while (randomEntity == Player | randomEntity.Carried)
         {
             randomEntity = WorldEntities[Random.Range(0, WorldEntities.Count)];
             Debug.Log("Trying to delete " + randomEntity.Name);

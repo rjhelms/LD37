@@ -27,6 +27,7 @@ public class GameController : MonoBehaviour
 
     public Text NameText;
     public Text CarryingText;
+    public GameObject GetReadyPanel;
 
     public Color NameTextNormal;
     public Color NameTextWarning;
@@ -48,7 +49,7 @@ public class GameController : MonoBehaviour
     public float TimeBetweenSpawnsInitial = 5f;
     public float TimeBetweenSpawnsMinimum = 0.1f;
     public float TimeAccelerationFactor = 1.1f;
-
+    public float TimeGetReady = 1.0f;
     public float MaxEntities = 10;
 
     public AudioClip WarningSound;
@@ -65,6 +66,7 @@ public class GameController : MonoBehaviour
     private int possessions_to_spawn;
     private string possession_prefix;
     private float time_to_next_spawn;
+    private float get_ready_time;
     private int current_screen_w;
     private int current_screen_h;
     private int warning_sound_played;
@@ -76,17 +78,8 @@ public class GameController : MonoBehaviour
     {
         InitScreen();
         WorldEntities.Add(Player);
-        next_entity = CreateImmigrant();
-        Instantiate(
-            SpawnWarningBoxPrefab, new Vector3(
-                next_entity.WorldX * Constants.GRID_SIZE,
-                next_entity.WorldY * Constants.GRID_SIZE,
-                10), Quaternion.identity);
-        possessions_to_spawn = Random.Range(0, 4);
-        NameText.text = next_entity.Name;
-        time_to_next_spawn = Time.time + TimeBetweenSpawnsInitial;
-        warning_sound_played = 0;
-        State = GameState.RUNNING;
+        get_ready_time = Time.time + TimeGetReady;
+        State = GameState.STARTING;
     }
 
     // Update is called once per frame
@@ -96,8 +89,24 @@ public class GameController : MonoBehaviour
         {
             InitScreen();
         }
-
-        if (State == GameState.RUNNING)
+        if (State == GameState.STARTING)
+        {
+            if (Time.time >= get_ready_time)
+            {
+                GetReadyPanel.SetActive(false);
+                next_entity = CreateImmigrant();
+                Instantiate(
+                    SpawnWarningBoxPrefab, new Vector3(
+                        next_entity.WorldX * Constants.GRID_SIZE,
+                        next_entity.WorldY * Constants.GRID_SIZE,
+                        10), Quaternion.identity);
+                possessions_to_spawn = Random.Range(0, 4);
+                NameText.text = next_entity.Name;
+                time_to_next_spawn = Time.time + TimeBetweenSpawnsInitial;
+                warning_sound_played = 0;
+                State = GameState.RUNNING;
+            }
+        } else if (State == GameState.RUNNING)
         { 
         UpdateSpawn();
 

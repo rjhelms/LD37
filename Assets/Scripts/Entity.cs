@@ -12,8 +12,7 @@ public class Entity : MonoBehaviour {
     public string ShortName;
 
     public bool Spawned = false;
-    public bool Lifted = false;
-
+    public bool Carried = false;
     public int w = 1;
     public int h = 1;
 
@@ -36,7 +35,7 @@ public class Entity : MonoBehaviour {
                 WorldY * Constants.GRID_SIZE, 
                 WorldY);
 
-            if (Lifted)
+            if (Carried)
             {
                 if (controller.Player.WorldX < WorldX)
                 {

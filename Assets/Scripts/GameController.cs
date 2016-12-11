@@ -99,48 +99,6 @@ public class GameController : MonoBehaviour
 
     #region Private Methods
 
-    private void TryLift()
-    {
-        if (held_entity)    // drop a held entity
-        {
-            held_entity.Lifted = false;
-            Debug.Log(string.Format("Dropped {0}", held_entity.Name));
-            held_entity = null;
-            CarryingText.text = "Nothing";
-        }
-        else
-        {
-            switch (Player.Rotation)
-            {
-                case 0:
-                    held_entity = GetEntityAtLocation(
-                        Player.WorldX, Player.WorldY - 1);
-                    break;
-                case 1:
-                    held_entity = GetEntityAtLocation(
-                        Player.WorldX - 1, Player.WorldY);
-                    break;
-                case 2:
-                    held_entity = GetEntityAtLocation(
-                        Player.WorldX, Player.WorldY + 1);
-                    break;
-                case 3:
-                    held_entity = GetEntityAtLocation(
-                        Player.WorldX + 1, Player.WorldY);
-                    break;
-            }
-            if (held_entity)
-            {
-                Debug.Log(string.Format("Lifted {0}", held_entity.Name));
-                held_entity.Lifted = true;
-                CarryingText.text = held_entity.Name;
-            }
-            else
-            {
-                Debug.Log("Nothing to lift.");
-            }
-        }
-    }
 
     private void ProcessMovementInput(out int movement_x, out int movement_y,
                                       out int movement_rotation)
@@ -249,6 +207,58 @@ public class GameController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E))
         {
             movement_rotation += 1;
+        }
+    }
+
+    private void TryLift()
+    {
+        if (held_entity)    // drop a held entity
+        {
+            held_entity.Carried = false;
+            Debug.Log(string.Format("Dropped {0}", held_entity.Name));
+            held_entity = null;
+            CarryingText.text = "Nothing";
+        }
+        else
+        {
+            int held_x;
+            int held_y;
+            switch (Player.Rotation)
+            {
+                case 0:
+                    held_x = Player.WorldX;
+                    held_y = Player.WorldY - 1;
+                    break;
+                case 1:
+                    held_x = Player.WorldX - 1;
+                    held_y = Player.WorldY;
+                    break;
+                case 2:
+                    held_x = Player.WorldX;
+                    held_y = Player.WorldY + 1;
+                    break;
+                case 3:
+                    held_x = Player.WorldX + 1;
+                    held_y = Player.WorldY;
+                    break;
+                default:
+                    held_x = 0;
+                    held_y = 0;
+                    break;
+            }
+            held_entity = GetEntityAtLocation(held_x, held_y);
+            if (held_entity)
+            {
+                Debug.Log(string.Format("Lifted {0}", held_entity.Name));
+                held_entity.Carried = true;
+                held_entity.CarriedX = held_x;
+                held_entity.CarriedY = held_y;
+                CarryingText.text = held_entity.Name;
+            }
+            else
+            {
+                Debug.Log("Nothing to lift.");
+            }
         }
     }
 
@@ -393,38 +403,77 @@ public class GameController : MonoBehaviour
                              relation);
     }
 
-    private bool CanMove(int x, int y, int rotation, Entity moving_entity)
+    private bool CanMove(int check_x, int check_y, int rotation, Entity moving_entity)
     {
-        if (x < 0 | y < 0 | x > Constants.MAX_X | y > Constants.MAX_Y)
+        // determine ranges of tiles occupied by moving_entity
+        int check_x_min = check_x;
+        int check_x_max = check_x;
+        int check_y_min = check_y;
+        int check_y_max = check_y;
+
+        if (rotation == 0 | rotation == 2)
         {
-            Debug.Log("movement blocked by world bounds: " + moving_entity.Name);
-            return false;
+            check_x_max += moving_entity.w;
+            check_y_max += moving_entity.h;
         }
-        foreach(Entity entity in WorldEntities)
+        else
         {
-            if (moving_entity != entity & entity.OccupiesTile(x, y))
-            {
-                bool can_block = false;
-                if (moving_entity == Player & !entity.Lifted)
+            check_x_max += moving_entity.h;
+            check_y_max += moving_entity.w;
+        }
+
+        // for each of these tiles...
+        for (int x = check_x_min; x < check_x_max; x++)
+        {
+            for (int y = check_y_min; y < check_y_max; y++)
+            { 
+                // if it's out of bound, abort
+                if (x < 0 | y < 0 | x > Constants.MAX_X | y > Constants.MAX_Y)
                 {
-                    can_block = true;
-                } else if (moving_entity.Lifted & entity != Player)
-                {
-                    can_block = true;
-                } else if (!moving_entity.Lifted & moving_entity != Player)
-                {
-                    can_block = true;
-                }
-                if (can_block)
-                {
-                    Debug.Log(string.Format(
-                        "movement blocked by {0}: {1}",
-                        entity.Name, moving_entity.Name));
+                    Debug.Log("movement blocked by world bounds: " + moving_entity.Name);
                     return false;
                 }
-            }
+
+                // otherwise, start checking other entities
+                foreach (Entity entity in WorldEntities)
+                {
+                    // check if it's an entity we can collide with
+                    bool can_block = false;
+                    if (moving_entity == entity)
+                    {
+                        // if we other entity is us, don't even bother checking
+                        // farther
+                        can_block = false;
+                    } else if (moving_entity == Player & !entity.Carried)
+                    {
+                        // if we're the player and it's something we're not
+                        // carrying
+                        can_block = true;
+                    }
+                    else if (moving_entity.Carried & entity != Player)
+                    {
+                        // or if we're being carried, and it's not the player
+                        can_block = true;
+                    }
+                    else if (!moving_entity.Carried & moving_entity != Player)
+                    {
+                        // or if we're NOT being carried and we're not the
+                        // player
+                        can_block = true;
+                    }
+                    if (can_block & entity.OccupiesTile(x, y))
+                    {
+                        // if it's a blockable pair, and the other entity
+                        // occupies the current tile, we're blocked
+                        Debug.Log(string.Format(
+                            "movement blocked by {0}: {1}",
+                            entity.Name, moving_entity.Name));
+                        return false;
+                    }
+                }
+            } // ... then check the next tile
         }
-        return true;
+        return true; // nothing left to check - it's good!
     }
 
     private Entity GetEntityAtLocation(int x, int y)

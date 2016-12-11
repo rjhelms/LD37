@@ -202,6 +202,7 @@ MonoBehaviour:
   - {fileID: 1013725322523804, guid: b46a5a60ad64e6f40a5906af6c05759a, type: 2}
   - {fileID: 1151966654534066, guid: 754ad7e0420d2854196afe081c723a6d, type: 2}
   - {fileID: 1151966654534066, guid: 754ad7e0420d2854196afe081c723a6d, type: 2}
+  - {fileID: 1745806984621578, guid: 3613e936b64bd084bb515af2ba1b1f5d, type: 2}
   PrefabInstantiatePoint: {x: 456, y: 304, z: 0}
   RelativeMovement: 1
   TimeBetweenSpawns: 4

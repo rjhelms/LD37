@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
+    #region Public fields
     public TextAsset NamesMale;
     public TextAsset NamesFemale;
     public TextAsset NamesSurnames;
@@ -34,10 +35,14 @@ public class GameController : MonoBehaviour
     public float TimeBetweenSpawnsInitial = 5f;
     public float TimeBetweenSpawnsMinimum = 0.1f;
     public float TimeAccelerationFactor = 1.1f;
+    #endregion
+
+    #region Private fields
     private Entity next_entity;
     private int possessions_to_spawn;
     private string possession_prefix;
     private float time_to_next_spawn;
+    #endregion
 
     #region MonoBehaviour Methods
     // Use this for initialization
@@ -252,6 +257,13 @@ public class GameController : MonoBehaviour
         int new_player_x = Player.WorldX + movement_x;
         int new_player_y = Player.WorldY + movement_y;
         int new_player_rotation = Player.Rotation + movement_rotation;
+        if (new_player_rotation < 0)
+        {
+            new_player_rotation += 4;
+        } else if (new_player_rotation > 3)
+        {
+            new_player_rotation -= 4;
+        }
         bool valid_held_entity_move = true;
         if (held_entity)
         {
@@ -273,7 +285,9 @@ public class GameController : MonoBehaviour
                 new_held_entity_y = (int)pivot_vector.y;
                 new_held_entity_rotation = (int)pivot_vector.z;
             }
-            valid_held_entity_move = CanMove(new_held_entity_x, new_held_entity_y, new_held_entity_rotation, held_entity);
+            valid_held_entity_move = CanMove(
+                new_held_entity_x, new_held_entity_y,
+                new_held_entity_rotation, held_entity);
 
             if (valid_held_entity_move)
             {

@@ -87,6 +87,13 @@ public class Entity : MonoBehaviour {
     public void Spawn()
     {
         Spawned = true;
+        if (w <= h)
+        {
+            Rotation = 0;
+        } else
+        {
+            Rotation = 1;
+        }
         transform.position = new Vector3(
             4 * Constants.GRID_SIZE,
             -1 * Constants.GRID_SIZE,

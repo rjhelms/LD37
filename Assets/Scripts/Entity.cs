@@ -13,6 +13,10 @@ public class Entity : MonoBehaviour {
 
     public bool Spawned = false;
     public bool Carried = false;
+    public int CarriedX;
+    public int CarriedY;
+    public int CarriedW;
+    public int CarriedH;
     public int w = 1;
     public int h = 1;
 
@@ -30,10 +34,7 @@ public class Entity : MonoBehaviour {
 	void Update () {
         if (Spawned)
         {
-            Vector3 target_position = new Vector3(
-                WorldX * Constants.GRID_SIZE, 
-                WorldY * Constants.GRID_SIZE, 
-                WorldY);
+            Vector3 target_position = CalculateTargetPosition();
 
             if (Carried)
             {
@@ -76,17 +77,38 @@ public class Entity : MonoBehaviour {
     public bool OccupiesTile(int x, int y)
     {
         if (!Spawned) return false;
+        int min_x = WorldX;
+        int min_y = WorldY;
         int max_x;
         int max_y;
         if (Rotation == 0 | Rotation == 2)
         {
             max_x = WorldX + w;
             max_y = WorldY + h;
-        } else {
+        }
+        else
+        {
             max_x = WorldX + h;
             max_y = WorldY + w;
         }
-        if (x >= WorldX & x < max_x & y >= WorldY & y < max_y)
+        if (Rotation == 1)
+        {
+            min_y -= w - 1;
+            max_y -= w - 1;
+        }
+        if (Rotation == 2)
+        {
+            min_x -= w - 1;
+            max_x -= w - 1;
+            min_y -= h - 1;
+            max_y -= h - 1;
+        }
+        if (Rotation == 3)
+        {
+            min_x -= h - 1;
+            max_x -= h - 1;
+        }
+        if (x >= min_x & x < max_x & y >= min_y & y < max_y)
         {
             return true;
         }
@@ -96,19 +118,69 @@ public class Entity : MonoBehaviour {
     public void Spawn()
     {
         Spawned = true;
-        int offset;
+        int y_offset;
         if (w <= h)
         {
             Rotation = 0;
-            offset = h;
+            y_offset = h;
         } else
         {
-            Rotation = 1;
-            offset = w;
+            Rotation = 3;
+            y_offset = w;
         }
         transform.position = new Vector3(
             WorldX * Constants.GRID_SIZE,
-            (WorldY - offset) * Constants.GRID_SIZE,
-            -offset);
+            (WorldY - y_offset) * Constants.GRID_SIZE,
+            -y_offset);
+    }
+
+    public void SetCarryPoint(int x, int y)
+    {
+        CarriedX = x;
+        CarriedY = y;
+        if (Rotation == 1 | Rotation == 3)
+        {
+            CarriedW = CarriedX - WorldX;
+            CarriedH = CarriedY - WorldY;
+        } else
+        {
+            CarriedW = CarriedY - WorldY;
+            CarriedH = CarriedX - WorldX;
+        }
+        if (Rotation > 1)
+        {
+            CarriedW = -CarriedW;
+            CarriedH = -CarriedH;
+        }
+    }
+
+    public Vector2 CarriedOffset()
+    {
+        return new Vector2(CarriedX - WorldX, CarriedY - WorldY);
+    }
+
+    private Vector3 CalculateTargetPosition()
+    {
+        int target_world_x = WorldX;
+        int target_world_y = WorldY;
+
+        if (Rotation == 1)
+        {
+            target_world_y -= w - 1;
+        }
+        if (Rotation == 2)
+        {
+            target_world_x -= w - 1;
+            target_world_y -= h - 1;
+        }
+        if (Rotation == 3)
+        {
+            target_world_x -= h-1;
+
+        }
+        return new Vector3(
+            target_world_x * Constants.GRID_SIZE,
+            target_world_y * Constants.GRID_SIZE,
+            target_world_y);
     }
 }

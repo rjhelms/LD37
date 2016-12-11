@@ -50,7 +50,7 @@ public class GameController : MonoBehaviour
     {
         WorldEntities.Add(Player);
         next_entity = CreateImmigrant();
-        possessions_to_spawn = Random.Range(0, 3);
+        possessions_to_spawn = Random.Range(0, 4);
         NameText.text = next_entity.Name;
         time_to_next_spawn = Time.time + TimeBetweenSpawnsInitial;
     }
@@ -98,7 +98,6 @@ public class GameController : MonoBehaviour
     #endregion
 
     #region Private Methods
-
 
     private void ProcessMovementInput(out int movement_x, out int movement_y,
                                       out int movement_rotation)
@@ -251,8 +250,7 @@ public class GameController : MonoBehaviour
             {
                 Debug.Log(string.Format("Lifted {0}", held_entity.Name));
                 held_entity.Carried = true;
-                held_entity.CarriedX = held_x;
-                held_entity.CarriedY = held_y;
+                held_entity.SetCarryPoint(held_x, held_y);
                 CarryingText.text = held_entity.Name;
             }
             else
@@ -278,32 +276,43 @@ public class GameController : MonoBehaviour
         if (held_entity)
         {
             valid_held_entity_move = false;
-            int new_held_entity_x = held_entity.WorldX;
-            int new_held_entity_y = held_entity.WorldY;
-            int new_held_entity_rotation = held_entity.Rotation;
+            int new_carried_position_x = held_entity.WorldX;
+            int new_carried_position_y = held_entity.WorldY;
+            int new_carried_rotation = held_entity.Rotation;
+            int new_carried_carry_x = held_entity.CarriedX;
+            int new_carried_carry_y = held_entity.CarriedY;
             if (movement_x != 0 || movement_y != 0)
             {
-                new_held_entity_x = held_entity.WorldX + movement_x;
-                new_held_entity_y = held_entity.WorldY + movement_y;
-                new_held_entity_rotation = held_entity.Rotation;
+                new_carried_position_x = held_entity.WorldX + movement_x;
+                new_carried_position_y = held_entity.WorldY + movement_y;
+                new_carried_rotation = held_entity.Rotation;
+                new_carried_carry_x = held_entity.CarriedX + movement_x;
+                new_carried_carry_y = held_entity.CarriedY + movement_y;
             }
             if (movement_rotation != 0)
             {
-                Vector3 pivot_vector = PivotEntity(
-                    Player, held_entity, movement_rotation);
-                new_held_entity_x = (int)pivot_vector.x;
-                new_held_entity_y = (int)pivot_vector.y;
-                new_held_entity_rotation = (int)pivot_vector.z;
+                Vector3 new_position_vector;
+                Vector2 new_carry_vector;
+                PivotEntity(
+                    Player, held_entity, movement_rotation,
+                    out new_position_vector, out new_carry_vector);
+                new_carried_position_x = (int)new_position_vector.x;
+                new_carried_position_y = (int)new_position_vector.y;
+                new_carried_rotation = (int)new_position_vector.z;
+                new_carried_carry_x = (int)new_carry_vector.x;
+                new_carried_carry_y = (int)new_carry_vector.y;
             }
             valid_held_entity_move = CanMove(
-                new_held_entity_x, new_held_entity_y,
-                new_held_entity_rotation, held_entity);
+                new_carried_position_x, new_carried_position_y,
+                new_carried_rotation, held_entity);
 
             if (valid_held_entity_move)
             {
-                held_entity.WorldX = new_held_entity_x;
-                held_entity.WorldY = new_held_entity_y;
-                held_entity.Rotation = new_held_entity_rotation;
+                held_entity.WorldX = new_carried_position_x;
+                held_entity.WorldY = new_carried_position_y;
+                held_entity.Rotation = new_carried_rotation;
+                held_entity.SetCarryPoint(
+                    new_carried_carry_x, new_carried_carry_y);
             }
         }
         if (valid_held_entity_move)
@@ -342,7 +351,7 @@ public class GameController : MonoBehaviour
                 if (possessions_to_spawn == 0)
                 {
                     next_entity = CreateImmigrant();
-                    possessions_to_spawn = Random.Range(0, 3);
+                    possessions_to_spawn = Random.Range(0, 4);
                 }
                 else
                 {
@@ -421,7 +430,24 @@ public class GameController : MonoBehaviour
             check_x_max += moving_entity.h;
             check_y_max += moving_entity.w;
         }
+        if (rotation == 1)
+        {
+            check_y_min -= moving_entity.w - 1;
+            check_y_max -= moving_entity.w - 1;
+        }
+        if (rotation == 2)
+        {
+            check_x_min -= moving_entity.w -1;
+            check_x_max -= moving_entity.w -1;
+            check_y_min -= moving_entity.h - 1;
+            check_y_max -= moving_entity.h - 1;
+        }
+        if (rotation == 3)
+        {
+            check_x_min -= moving_entity.h-1;
+            check_x_max -= moving_entity.h-1;
 
+        }
         // for each of these tiles...
         for (int x = check_x_min; x < check_x_max; x++)
         {
@@ -488,13 +514,14 @@ public class GameController : MonoBehaviour
         return null;
     }
 
-    private Vector3 PivotEntity(Entity pivot_entity, Entity moving_entity, 
-                                int rotation)
+    private void PivotEntity(Entity pivot_entity, Entity moving_entity, 
+                                int rotation, out Vector3 new_entity_position,
+                                out Vector2 new_carry_position)
     {
+        // calculate rotation for the two items
         int new_moving_rotation = moving_entity.Rotation + rotation;
         int new_pivot_rotation = pivot_entity.Rotation + rotation;
-        int new_x = pivot_entity.WorldX;
-        int new_y = pivot_entity.WorldY;
+
         if (new_moving_rotation < 0)
         {
             new_moving_rotation += 4;
@@ -511,22 +538,44 @@ public class GameController : MonoBehaviour
         {
             new_pivot_rotation -= 4;
         }
+
+        // figure out where we'll be holding it by
+        int new_held_x = pivot_entity.WorldX;
+        int new_held_y = pivot_entity.WorldY;
+
         switch (new_pivot_rotation)
         {
             case 0:
-                new_y -= 1;
+                new_held_y -= 1;
                 break;
             case 1:
-                new_x -= 1;
+                new_held_x -= 1;
                 break;
             case 2:
-                new_y += 1;
+                new_held_y += 1;
                 break;
             case 3:
-                new_x += 1;
+                new_held_x += 1;
                 break;
         }
-        return new Vector3(new_x, new_y, new_moving_rotation);
+
+        int new_x = 0;
+        int new_y = 0;
+
+        if (rotation < 0)
+        {
+            new_x = -(moving_entity.WorldY - pivot_entity.WorldY) + pivot_entity.WorldX;
+            new_y = (moving_entity.WorldX - pivot_entity.WorldX) + pivot_entity.WorldY;
+        }
+        else
+        {
+            new_x = (moving_entity.WorldY - pivot_entity.WorldY) + pivot_entity.WorldX;
+            new_y = -(moving_entity.WorldX - pivot_entity.WorldX) + pivot_entity.WorldY;
+        }
+
+        new_carry_position = new Vector2(new_held_x, new_held_y);
+        new_entity_position = new Vector3(
+            new_x, new_y, new_moving_rotation);
     }
 
     private Entity CreateImmigrant()

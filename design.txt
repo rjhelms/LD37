@@ -11,3 +11,7 @@ rotations:
 	1 - left
 	2 - up
 	3 - right
+
+therefore:
+positive - clockwise
+negative - counterclockwise

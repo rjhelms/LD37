@@ -186,6 +186,7 @@ MonoBehaviour:
   RelationsMale: {fileID: 4900000, guid: e650be43b089873469aced8d476e8b10, type: 3}
   RelationsFemale: {fileID: 4900000, guid: 07c0fc056a544f741a2592642beb9152, type: 3}
   NameText: {fileID: 847372655}
+  CarryingText: {fileID: 1561443355}
   NameTextNormal: {r: 0.79607844, g: 0.85882354, b: 0.9882353, a: 1}
   NameTextWarning: {r: 0.8509804, g: 0.34117648, b: 0.3882353, a: 1}
   NameTextUrgent: {r: 0.6745098, g: 0.19607843, b: 0.19607843, a: 1}
@@ -198,9 +199,12 @@ MonoBehaviour:
   - {fileID: 1572490786925214, guid: 9acc6e79aebaef8428ca7ca8133ce399, type: 2}
   PossessionPrefabs:
   - {fileID: 1965959908395294, guid: 38027912e53c30e4489f399544f0b352, type: 2}
+  - {fileID: 1013725322523804, guid: b46a5a60ad64e6f40a5906af6c05759a, type: 2}
+  - {fileID: 1151966654534066, guid: 754ad7e0420d2854196afe081c723a6d, type: 2}
+  - {fileID: 1151966654534066, guid: 754ad7e0420d2854196afe081c723a6d, type: 2}
   PrefabInstantiatePoint: {x: 456, y: 304, z: 0}
   RelativeMovement: 1
-  TimeBetweenSpawns: 8
+  TimeBetweenSpawns: 4
   TimeBetweenSpawnsInitial: 2
   TimeBetweenSpawnsMinimum: 0.1
   TimeAccelerationFactor: 1.01
@@ -352,7 +356,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1208211097}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 192, y: 192, z: 4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -589,13 +593,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'one
-
-    two
-
-    three
-
-'
+  m_Text: Nothing
 --- !u!222 &1561443356
 CanvasRenderer:
   m_ObjectHideFlags: 0

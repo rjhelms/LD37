@@ -39,6 +39,7 @@ public class GameController : MonoBehaviour
     private string possession_prefix;
     private float time_to_next_spawn;
 
+    #region MonoBehaviour Methods
     // Use this for initialization
     void Start()
     {
@@ -87,6 +88,9 @@ public class GameController : MonoBehaviour
             }
         }
     }
+    #endregion
+
+    #region Private Methods
 
     private void TryLift()
     {
@@ -333,7 +337,7 @@ public class GameController : MonoBehaviour
         }
     }
 
-    string GenerateName(bool? male=null)
+    private string GenerateName(bool? male=null)
     {
         string first_name;
         string last_name;
@@ -372,7 +376,7 @@ public class GameController : MonoBehaviour
                              relation);
     }
 
-    bool CanMove(int x, int y, int rotation, Entity moving_entity)
+    private bool CanMove(int x, int y, int rotation, Entity moving_entity)
     {
         if (x < 0 | y < 0 | x > Constants.MAX_X | y > Constants.MAX_Y)
         {
@@ -406,7 +410,7 @@ public class GameController : MonoBehaviour
         return true;
     }
 
-    Entity GetEntityAtLocation(int x, int y)
+    private Entity GetEntityAtLocation(int x, int y)
     {
         foreach(Entity entity in WorldEntities)
         {
@@ -418,7 +422,7 @@ public class GameController : MonoBehaviour
         return null;
     }
 
-    Vector3 PivotEntity(Entity pivot_entity, Entity moving_entity, int rotation)
+    private Vector3 PivotEntity(Entity pivot_entity, Entity moving_entity, int rotation)
     {
         int new_moving_rotation = moving_entity.Rotation + rotation;
         int new_pivot_rotation = pivot_entity.Rotation + rotation;
@@ -458,7 +462,7 @@ public class GameController : MonoBehaviour
         return new Vector3(new_x, new_y, new_moving_rotation);
     }
 
-    Entity CreateImmigrant()
+    private Entity CreateImmigrant()
     {
         bool male = false;
         if (Random.value < 0.5)
@@ -490,7 +494,7 @@ public class GameController : MonoBehaviour
         return new_entity;
     }
 
-    Entity CreatePossession()
+    private Entity CreatePossession()
     {
         GameObject new_possession;
         new_possession = Instantiate(
@@ -502,4 +506,6 @@ public class GameController : MonoBehaviour
         new_possession.name = new_entity.Name;
         return new_entity;
     }
+
+    #endregion
 }

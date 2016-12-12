@@ -285,7 +285,7 @@ public class GameController : MonoBehaviour
         {
             movement_rotation += 1;
         }
-        if (Input.GetKeyDown(KeyCode.F12))
+        if (Input.GetKeyDown(KeyCode.F9))
         {
             ScoreManager.Instance.RelativeMovement = !ScoreManager.Instance.RelativeMovement;
         }

@@ -202,6 +202,7 @@ MonoBehaviour:
   - {fileID: 1025569141875408, guid: 8db5ed068c1308c4eb657c7a49596477, type: 2}
   FemalePrefabs:
   - {fileID: 1572490786925214, guid: 9acc6e79aebaef8428ca7ca8133ce399, type: 2}
+  - {fileID: 1439048714247674, guid: ba73bda2f5890e441b95d0870245da7a, type: 2}
   PossessionPrefabs:
   - {fileID: 1151966654534066, guid: 754ad7e0420d2854196afe081c723a6d, type: 2}
   - {fileID: 1343626168279904, guid: d8f84b0a13c8b1f4a8426ba8ea388daf, type: 2}
@@ -212,7 +213,6 @@ MonoBehaviour:
   SpawnWarningBoxPrefab: {fileID: 1248534147329608, guid: 713225f7c9aafad4db27ef3d05462bf1,
     type: 2}
   PrefabInstantiatePoint: {x: 456, y: 304, z: 0}
-  RelativeMovement: 1
   TimeBetweenSpawns: 6
   TimeBetweenSpawnsInitial: 2
   TimeBetweenSpawnsMinimum: 1

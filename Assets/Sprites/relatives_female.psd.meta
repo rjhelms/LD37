@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 700e376e4163d244d8ae5c805a998be3
-timeCreated: 1481410954
+timeCreated: 1481507712
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -12,6 +12,10 @@ TextureImporter:
     21300010: relatives_female_5
     21300012: relatives_female_6
     21300014: relatives_female_7
+    21300016: relatives_female_8
+    21300018: relatives_female_9
+    21300020: relatives_female_10
+    21300022: relatives_female_11
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -90,7 +94,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 64
+        y: 128
         width: 48
         height: 64
       alignment: 6
@@ -103,7 +107,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 48
-        y: 64
+        y: 128
         width: 48
         height: 64
       alignment: 6
@@ -116,7 +120,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 96
-        y: 64
+        y: 128
         width: 48
         height: 64
       alignment: 6
@@ -129,7 +133,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 144
-        y: 64
+        y: 128
         width: 48
         height: 64
       alignment: 6
@@ -142,7 +146,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
+        y: 64
         width: 48
         height: 64
       alignment: 6
@@ -155,7 +159,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 48
-        y: 0
+        y: 64
         width: 48
         height: 64
       alignment: 6
@@ -168,7 +172,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 96
-        y: 0
+        y: 64
         width: 48
         height: 64
       alignment: 6
@@ -178,6 +182,58 @@ TextureImporter:
       tessellationDetail: 0
     - serializedVersion: 2
       name: relatives_female_7
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 64
+        width: 48
+        height: 64
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: relatives_female_8
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 48
+        height: 64
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: relatives_female_9
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 0
+        width: 48
+        height: 64
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: relatives_female_10
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 0
+        width: 48
+        height: 64
+      alignment: 6
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: relatives_female_11
       rect:
         serializedVersion: 2
         x: 144

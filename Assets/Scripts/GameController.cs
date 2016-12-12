@@ -156,7 +156,7 @@ public class GameController : MonoBehaviour
         {
             if (!SoundPlayer.isPlaying)
             {
-                SceneManager.LoadScene("main");
+                SceneManager.LoadScene("gameover");
             }
         }
     }

@@ -45,7 +45,6 @@ public class GameController : MonoBehaviour
     public GameObject SpawnWarningBoxPrefab;
 
     public Vector3 PrefabInstantiatePoint;
-    public bool RelativeMovement = false;
     public float TimeBetweenSpawns = 1f;
     public float TimeBetweenSpawnsInitial = 5f;
     public float TimeBetweenSpawnsMinimum = 0.1f;
@@ -184,9 +183,9 @@ public class GameController : MonoBehaviour
         movement_x = 0;
         movement_y = 0;
         movement_rotation = 0;
-        if (RelativeMovement)
+        if (ScoreManager.Instance.RelativeMovement)
         {
-            if (Input.GetKeyDown(KeyCode.W))
+            if (Input.GetKeyDown(KeyCode.W) | Input.GetKeyDown(KeyCode.Keypad8))
             {
                 switch (Player.Rotation)
                 {
@@ -204,7 +203,7 @@ public class GameController : MonoBehaviour
                         break;
                 }
             }
-            if (Input.GetKeyDown(KeyCode.S))
+            if (Input.GetKeyDown(KeyCode.S) | Input.GetKeyDown(KeyCode.Keypad2))
             {
                 switch (Player.Rotation)
                 {
@@ -222,7 +221,7 @@ public class GameController : MonoBehaviour
                         break;
                 }
             }
-            if (Input.GetKeyDown(KeyCode.A))
+            if (Input.GetKeyDown(KeyCode.A) | Input.GetKeyDown(KeyCode.Keypad4))
             {
                 switch (Player.Rotation)
                 {
@@ -240,7 +239,7 @@ public class GameController : MonoBehaviour
                         break;
                 }
             }
-            if (Input.GetKeyDown(KeyCode.D))
+            if (Input.GetKeyDown(KeyCode.D) | Input.GetKeyDown(KeyCode.Keypad6))
             {
                 switch (Player.Rotation)
                 {
@@ -261,30 +260,34 @@ public class GameController : MonoBehaviour
         }
         else
         {
-            if (Input.GetKeyDown(KeyCode.W))
+            if (Input.GetKeyDown(KeyCode.W) | Input.GetKeyDown(KeyCode.Keypad8))
             {
                 movement_y += 1;
             }
-            if (Input.GetKeyDown(KeyCode.S))
+            if (Input.GetKeyDown(KeyCode.S) | Input.GetKeyDown(KeyCode.Keypad2))
             {
                 movement_y -= 1;
             }
-            if (Input.GetKeyDown(KeyCode.A))
+            if (Input.GetKeyDown(KeyCode.A) | Input.GetKeyDown(KeyCode.Keypad4))
             {
                 movement_x -= 1;
             }
-            if (Input.GetKeyDown(KeyCode.D))
+            if (Input.GetKeyDown(KeyCode.D) | Input.GetKeyDown(KeyCode.Keypad6))
             {
                 movement_x += 1;
             }
         }
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKeyDown(KeyCode.Q) | Input.GetKeyDown(KeyCode.Keypad7))
         {
             movement_rotation -= 1;
         }
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.E) | Input.GetKeyDown(KeyCode.Keypad9))
         {
             movement_rotation += 1;
+        }
+        if (Input.GetKeyDown(KeyCode.F12))
+        {
+            ScoreManager.Instance.RelativeMovement = !ScoreManager.Instance.RelativeMovement;
         }
     }
 

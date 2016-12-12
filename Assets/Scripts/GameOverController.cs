@@ -89,6 +89,7 @@ public class GameOverController : MonoBehaviour {
                     State++;
                     HighScore.text = string.Format("{0}", ScoreManager.Instance.Score);
                     PlayerPrefs.SetInt("highscore", ScoreManager.Instance.Score);
+                    PlayerPrefs.Save();
                     SoundPlayer.PlayOneShot(NewHighScore);
                     next_state_time = Time.time + StateTime;
                     break;
@@ -107,7 +108,7 @@ public class GameOverController : MonoBehaviour {
             } else if (Input.anyKeyDown)
             {
                 ScoreManager.Instance.Reset();
-                SceneManager.LoadScene("main");
+                SceneManager.LoadScene("title");
             }
         }
     }
